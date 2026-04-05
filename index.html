@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcademIQ Suite v4.0 — Professional Academic AI Tools</title>
+  
+  <!-- Libraries for Export & File Handling -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  
+  <style>
+    :root{--primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#3b82f6;--secondary:#64748b;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--bg:#f8fafc;--card:#fff;--text:#1e293b;--text-muted:#64748b;--border:#e2e8f0;--shadow:0 1px 3px rgba(0,0,0,.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--radius:12px;--radius-sm:8px;--transition:all .2s ease;--engine-active:#10b981}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+    .container{max-width:1400px;margin:0 auto;padding:1rem}
+    
+    /* Header */
+    header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:1rem;margin-bottom:1rem;border-radius:0 0 var(--radius) var(--radius);box-shadow:var(--shadow-lg);position:sticky;top:0;z-index:100}
+    .header-content{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem}
+    .logo{display:flex;align-items:center;gap:.75rem;font-size:1.25rem;font-weight:700}
+    .logo-icon{width:36px;height:36px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800}
+    .engine-status{display:flex;align-items:center;gap:.5rem;padding:.35rem .75rem;background:rgba(255,255,255,.15);border-radius:20px;font-size:.75rem}
+    .engine-dot{width:8px;height:8px;border-radius:50%;background:var(--engine-active);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.3)}50%{opacity:.7}}
+    .connection-status{display:flex;align-items:center;gap:.35rem;padding:.35rem .75rem;background:rgba(255,255,255,.1);border-radius:16px;font-size:.75rem}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--danger)}
+    .status-dot.connected{background:var(--success)}
+    
+    /* Navigation */
+    .nav-tabs{display:flex;gap:.25rem;background:var(--card);padding:.35rem;border-radius:var(--radius);margin-bottom:1rem;box-shadow:var(--shadow);flex-wrap:wrap;position:sticky;top:72px;z-index:99}
+    .nav-tab{padding:.5rem .85rem;border:none;background:transparent;border-radius:var(--radius-sm);font-weight:500;cursor:pointer;transition:var(--transition);color:var(--text-muted);font-size:.875rem;display:flex;align-items:center;gap:.35rem}
+    .nav-tab:hover{background:var(--bg);color:var(--text)}
+    .nav-tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 4px rgba(37,99,235,.3)}
+    
+    /* Cards */
+    .card{background:var(--card);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.5rem}
+    .card-title{font-size:1.1rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+    .card-subtitle{font-size:.875rem;color:var(--text-muted);margin-top:.25rem}
+    
+    /* Forms */
+    textarea{width:100%;min-height:180px;padding:.85rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem;resize:vertical;transition:var(--transition);font-family:inherit}
+    textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .char-count{text-align:right;font-size:.75rem;color:var(--text-muted);margin-top:.35rem}
+    .form-group{margin-bottom:.85rem}
+    .form-label{display:block;font-weight:500;margin-bottom:.35rem;color:var(--text);font-size:.875rem}
+    .form-control{width:100%;padding:.65rem .85rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:.95rem}
+    .form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    select.form-control{appearance:none;background-image:url("image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right .65rem center;padding-right:2rem}
+    
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:.35rem;padding:.55rem 1.1rem;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-weight:500;cursor:pointer;transition:var(--transition);font-size:.875rem}
+    .btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+    .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-secondary{background:var(--secondary)}
+    .btn-outline{background:transparent;border:2px solid var(--border);color:var(--text)}
+    .btn-outline:hover{background:var(--bg);border-color:var(--primary);color:var(--primary)}
+    .btn-success{background:var(--success)}
+    .btn-warning{background:var(--warning);color:#1e293b}
+    .btn-danger{background:var(--danger)}
+    .btn-sm{padding:.35rem .75rem;font-size:.75rem}
+    .btn-group{display:flex;gap:.35rem;flex-wrap:wrap}
+    
+    /* File Upload */
+    .file-upload{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg)}
+    .file-upload:hover{border-color:var(--primary);background:rgba(37,99,235,.05)}
+    .file-upload.dragover{border-color:var(--primary);background:rgba(37,99,235,.1)}
+    .file-upload input{display:none}
+    
+    /* Results & Display */
+    .result-section{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:none}
+    .result-section.active{display:block}
+    .score-display{text-align:center;padding:1rem;background:linear-gradient(135deg,var(--bg),#fff);border-radius:var(--radius);margin-bottom:.85rem}
+    .score-value{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .indicators-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin:.85rem 0}
+    .indicator-card{padding:.85rem;background:var(--bg);border-radius:var(--radius-sm);border-left:4px solid var(--primary)}
+    .indicator-card.high{border-left-color:var(--danger)}.indicator-card.medium{border-left-color:var(--warning)}.indicator-card.low{border-left-color:var(--success)}
+    .indicator-name{font-weight:600;font-size:.8rem}.indicator-value{font-size:1.1rem;font-weight:700}.indicator-explanation{font-size:.75rem;color:var(--text-muted);margin-top:.15rem}
+    
+    /* Action Bar */
+    .action-bar{display:flex;gap:.35rem;flex-wrap:wrap;margin:.85rem 0;padding:.5rem;background:var(--bg);border-radius:var(--radius-sm);align-items:center}
+    
+    /* Writer Chat */
+    .chat-container{display:flex;flex-direction:column;height:500px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+    .chat-history{flex:1;overflow-y:auto;padding:1rem;background:var(--bg)}
+    .chat-message{margin-bottom:1rem;padding:.75rem;border-radius:var(--radius-sm)}
+    .chat-message.user{background:var(--primary-light);color:#fff;margin-left:20%}
+    .chat-message.ai{background:var(--card);border:1px solid var(--border);margin-right:20%}
+    .chat-input{display:flex;gap:.5rem;padding:.75rem;border-top:1px solid var(--border);background:var(--card)}
+    .chat-input textarea{flex:1;min-height:60px;resize:none}
+    
+    /* Bibliography */
+    .biblio-search{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+    .biblio-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.85rem}
+    .biblio-results{display:grid;gap:.75rem}
+    .biblio-result{padding:.85rem;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)}
+    .biblio-title{font-weight:600;color:var(--primary);margin-bottom:.35rem}
+    .biblio-meta{font-size:.8rem;color:var(--text-muted)}
+    .citation-text{font-family:Georgia,serif;font-size:.9rem;line-height:1.5;white-space:pre-wrap;margin:.35rem 0}
+    
+    /* Print/Export */
+    #printArea{display:none}
+    @media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;left:0;top:0;width:100%;padding:2rem;font-size:11pt;color:#000;background:#fff}.print-header{text-align:center;border-bottom:3px solid #000;padding-bottom:1rem;margin-bottom:1.5rem}.print-title{font-size:18pt;font-weight:700}.print-content{line-height:1.8}.print-section{margin-bottom:1.5rem}.print-section-title{font-size:13pt;font-weight:600;border-bottom:1px solid #ccc;padding-bottom:.35rem;margin-bottom:.75rem}.print-footer{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:8pt;color:#777;padding:.5rem;border-top:1px solid #ccc}}
+    
+    /* Utilities */
+    .hidden{display:none!important}.text-center{text-align:center}.flex{display:flex}.flex-wrap{flex-wrap:wrap}.gap-1{gap:.5rem}.items-center{align-items:center}.justify-between{justify-content:space-between}
+    pre{background:var(--bg);padding:.85rem;border-radius:var(--radius-sm);white-space:pre-wrap;font-family:inherit;min-height:120px;overflow-x:auto;font-size:.9rem}
+    .loading{display:none;text-align:center;padding:1.5rem;color:var(--text-muted)}.loading.active{display:block}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto .75rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .alert{padding:.75rem;border-radius:var(--radius-sm);margin-bottom:.85rem;display:none}.alert.active{display:block}.alert-success{background:#dcfce7;border:1px solid #86efac;color:#166534}.alert-error{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b}.alert-warning{background:#fef3c7;border:1px solid #fcd34d;color:#92400e}
+    
+    @media(max-width:900px){.header-content{flex-direction:column;text-align:center}.nav-tabs{position:static;top:auto;justify-content:center}.card-header{flex-direction:column;align-items:flex-start}.biblio-search{flex-direction:column}}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content container">
+      <div class="logo"><div class="logo-icon">AI</div><div><div>AcademIQ</div><div style="font-size:.75rem;opacity:.9">Suite v4.0</div></div></div>
+      <div style="display:flex;gap:.75rem;align-items:center">
+        <div class="engine-status"><span class="engine-dot"></span><span>Ultra Engine Active</span></div>
+        <div class="connection-status"><span class="status-dot" id="statusDot"></span><span id="statusText">Belum terhubung</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="detector">🔍 AI Detector</button>
+      <button class="nav-tab" data-tab="humanizer">✍️ Humanizer</button>
+      <button class="nav-tab" data-tab="writer">✍️ Write Teks</button>
+      <button class="nav-tab" data-tab="bibliography">📚 Bibliography</button>
+      <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
+    </nav>
+
+    <div class="alert" id="alertBox"></div>
+
+    <!-- ===== TAB: AI DETECTOR ===== -->
+    <section id="tab-detector" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <div><h2 class="card-title">🔍 AI Content Detector</h2><div class="card-subtitle">Analisis 15+ indikator linguistik untuk deteksi konten AI</div></div>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm" id="btnClearDetector">🗑️ Bersihkan</button>
+            <button class="btn btn-sm" id="btnAnalyze">🔬 Analisis</button>
+          </div>
+        </div>
+        
+        <!-- File Upload -->
+        <div class="form-group">
+          <label class="form-label">Upload File (.docx/.pdf) atau Tempel Teks</label>
+          <div class="file-upload" id="detectorFileDrop">
+            <input type="file" id="detectorFileInput" accept=".docx,.pdf,.txt">
+            <div>📁 Klik atau drag file .docx/.pdf/.txt</div>
+            <div style="font-size:.75rem;color:var(--text-muted)">Mendukung: DOCX, PDF, TXT (max 5MB)</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="detectorInput" placeholder="Atau tempel teks minimal 100 kata..."></textarea>
+          <div class="char-count"><span id="detectorCharCount">0</span> kata · <span id="detectorByteCount">0</span> karakter</div>
+        </div>
+
+        <div class="loading" id="detectorLoading"><div class="spinner"></div><p>Menganalisis dengan Claude AI...</p></div>
+
+        <div class="result-section" id="detectorResult">
+          <div class="score-display"><div class="score-value" id="aiScore">—</div><div>Skor Deteksi AI</div></div>
+          
+          <h4 style="margin:.85rem 0 .4rem">📋 Ringkasan</h4>
+          <p id="aiSummary" style="color:var(--text-muted);font-size:.9rem"></p>
+          
+          <h4 style="margin:1rem 0 .4rem">📊 15 Indikator Linguistik</h4>
+          <div class="indicators-grid" id="indicatorsGrid"></div>
+          
+          <h4 style="margin:1rem 0 .4rem">🔍 Analisis per Kalimat</h4>
+          <div id="sentenceAnalysis" style="background:var(--bg);padding:.85rem;border-radius:var(--radius-sm);font-size:.85rem;max-height:200px;overflow-y:auto"></div>
+          
+          <h4 style="margin:1rem 0 .4rem">💡 Rekomendasi</h4>
+          <p id="recommendation" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);padding:.85rem;border-radius:var(--radius-sm);border-left:4px solid var(--primary);font-size:.9rem"></p>
+          
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm" id="btnCopyDetector">📋 Salin</button>
+            <button class="btn btn-outline btn-sm" id="btnPrintDetector">🖨️ Cetak</button>
+            <button class="btn btn-outline btn-sm" id="btnExportDetectorPdf">📄 PDF</button>
+            <button class="btn btn-outline btn-sm" id="btnExportDetectorDocx">📝 DOCX</button>
+          </div>
+        </div>
+        <div id="detectorPlaceholder" class="text-center" style="padding:1.5rem;color:var(--text-muted)">Masukkan teks atau upload file, lalu klik Analisis</div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: HUMANIZER ===== -->
+    <section id="tab-humanizer" class="tab-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div><h2 class="card-title">✍️ AI Text Humanizer</h2><div class="card-subtitle">4 gaya transformasi: Academic, Professional, Natural, Creative</div></div>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm" id="btnClearHumanizer">🗑️ Bersihkan</button>
+            <button class="btn btn-sm" id="btnHumanize">✨ Humanisasi</button>
+          </div>
+        </div>
+        
+        <!-- File Upload -->
+        <div class="form-group">
+          <label class="form-label">Upload File (.docx/.pdf) atau Tempel Teks</label>
+          <div class="file-upload" id="humanizerFileDrop">
+            <input type="file" id="humanizerFileInput" accept=".docx,.pdf,.txt">
+            <div>📁 Klik atau drag file .docx/.pdf/.txt</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <textarea id="humanizerInput" placeholder="Atau tempel teks bercorak AI..."></textarea>
+          <div class="char-count"><span id="humanizerCharCount">0</span> kata</div>
+        </div>
+        
+        <!-- Style Selection -->
+        <div class="flex gap-1 mb-1">
+          <div class="form-group" style="flex:1"><label class="form-label">Gaya Transformasi</label>
+            <select class="form-control" id="humanizerStyle">
+              <option value="academic">🎓 Academic — Formal, struktural, referensi kontekstual</option>
+              <option value="professional" selected>💼 Professional — Bisnis, jelas, persuasif</option>
+              <option value="natural">🌿 Natural — Santai, conversational, mengalir</option>
+              <option value="creative">🎨 Creative — Ekspresif, metaforis, engaging</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1"><label class="form-label">Register</label>
+            <select class="form-control" id="humanizerRegister">
+              <option value="id">🇮🇩 Bahasa Indonesia</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="mixed">🔄 Campuran</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="loading" id="humanizerLoading"><div class="spinner"></div><p>Memproses humanisasi...</p></div>
+
+        <div class="result-section" id="humanizerResult">
+          <div class="flex justify-between items-center mb-1">
+            <h4 style="font-size:1rem">✅ Hasil Humanisasi</h4>
+            <div class="btn-group"><button class="btn btn-outline btn-sm" id="btnCopyHumanized">📋 Salin</button><button class="btn btn-outline btn-sm" id="btnDownloadHumanized">⬇ TXT</button></div>
+          </div>
+          
+          <div class="flex gap-1 mb-1">
+            <button class="btn btn-secondary btn-sm" id="btnShowOriginal">📄 Asli</button>
+            <button class="btn btn-sm" id="btnShowHumanized">✨ Hasil</button>
+          </div>
+          <pre id="humanizedOutput" style="display:none"></pre>
+          <pre id="originalOutput" style="display:none"></pre>
+          
+          <h4 style="margin:1rem 0 .4rem">📋 Ringkasan Transformasi</h4>
+          <ul id="transformationSummary" style="padding-left:1.25rem;color:var(--text-muted);font-size:.9rem"></ul>
+          
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm" id="btnPrintHumanizer">🖨️ Cetak</button>
+            <button class="btn btn-outline btn-sm" id="btnExportHumanizerPdf">📄 PDF</button>
+            <button class="btn btn-outline btn-sm" id="btnExportHumanizerDocx">📝 DOCX</button>
+          </div>
+        </div>
+        <div id="humanizerPlaceholder" class="text-center" style="padding:1.5rem;color:var(--text-muted)">Masukkan teks AI, pilih gaya, lalu klik Humanisasi</div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: WRITE TEKS ===== -->
+    <section id="tab-writer" class="tab-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div><h2 class="card-title">✶ Write Teks — Claude AI Chat</h2><div class="card-subtitle">5 mode penulisan • Chat history • Ctrl+Enter • Export DOCX</div></div>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm" id="btnClearChat">🗑️ Reset Chat</button>
+            <button class="btn btn-outline btn-sm" id="btnExportChat">💾 Export Chat</button>
+          </div>
+        </div>
+        
+        <!-- Mode Selection -->
+        <div class="flex gap-1 mb-1" style="flex-wrap:wrap">
+          <button class="btn btn-sm mode-btn active" data-mode="academic">🎓 Academic</button>
+          <button class="btn btn-sm mode-btn" data-mode="research">🔬 Research</button>
+          <button class="btn btn-sm mode-btn" data-mode="editor">✏️ Editor</button>
+          <button class="btn btn-sm mode-btn" data-mode="creative">🎨 Creative</button>
+          <button class="btn btn-sm mode-btn" data-mode="free">💬 Free</button>
+        </div>
+        
+        <!-- Quick Prompts -->
+        <div class="flex gap-1 mb-1" style="flex-wrap:wrap">
+          <span class="prompt-chip" data-prompt="Buatkan abstrak penelitian tentang">📄 Abstrak</span>
+          <span class="prompt-chip" data-prompt="Tuliskan pendahuluan komprehensif untuk">📝 Pendahuluan</span>
+          <span class="prompt-chip" data-prompt="Rumuskan masalah penelitian:">🔍 Rumusan Masalah</span>
+          <span class="prompt-chip" data-prompt="Buat kajian pustaka tentang">📚 Kajian Pustaka</span>
+          <span class="prompt-chip" data-prompt="Parafrase teks berikut:">✏️ Parafrase</span>
+          <span class="prompt-chip" data-prompt="Jelaskan metodologi untuk">🔬 Metodologi</span>
+          <span class="prompt-chip" data-prompt="Buat kesimpulan kuat untuk">🏁 Kesimpulan</span>
+        </div>
+        
+        <!-- Chat Interface -->
+        <div class="chat-container">
+          <div class="chat-history" id="chatHistory">
+            <div class="chat-message ai">👋 Halo! Saya Claude AI, asisten penulisan akademik Anda. Pilih mode di atas, gunakan prompt cepat, atau ketik pertanyaan. Tekan <strong>Ctrl+Enter</strong> untuk kirim cepat.</div>
+          </div>
+          <div class="chat-input">
+            <textarea id="writerInput" placeholder="Ketik prompt atau pertanyaan Anda..."></textarea>
+            <button class="btn" id="btnSendWriter">✍️ Kirim</button>
+          </div>
+        </div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem">💡 Tip: Ctrl+Enter untuk kirim • Chat history disimpan di browser</div>
+
+        <div class="loading" id="writerLoading"><div class="spinner"></div><p>Claude AI sedang menulis...</p></div>
+
+        <div class="result-section" id="writerResult">
+          <div class="action-bar">
+            <button class="btn btn-outline btn-sm" id="btnCopyWriter">📋 Salin Terakhir</button>
+            <button class="btn btn-outline btn-sm" id="btnPrintWriter">🖨️ Cetak</button>
+            <button class="btn btn-outline btn-sm" id="btnExportWriterPdf">📄 PDF</button>
+            <button class="btn btn-outline btn-sm" id="btnExportWriterDocx">📝 DOCX</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: BIBLIOGRAPHY ===== -->
+    <section id="tab-bibliography" class="tab-content hidden">
+      <div class="card">
+        <div class="card-header">
+          <div><h2 class="card-title">📚 Bibliography Creator</h2><div class="card-subtitle">Generate 10 referensi valid • 7 gaya sitasi • Export DOCX</div></div>
+          <div class="btn-group">
+            <button class="btn btn-outline btn-sm" id="btnClearBiblio">🗑️ Bersihkan</button>
+            <button class="btn btn-sm" id="btnSearchBiblio">🔍 Cari Referensi</button>
+          </div>
+        </div>
+        
+        <!-- Search -->
+        <div class="biblio-search">
+          <input type="text" class="form-control" id="biblioQuery" placeholder="Ketik topik/kata kunci: 'ekoteologi Islam', 'AI pendidikan', 'ekonomi syariah'...">
+          <button class="btn" id="btnSearchBiblio2">🔍 Cari</button>
+        </div>
+        
+        <!-- Filters -->
+        <div class="biblio-filters">
+          <select class="form-control" id="biblioType"><option value="all">📚 Semua Tipe</option><option value="journal">📄 Jurnal</option><option value="book">📖 Buku</option><option value="thesis">🎓 Tesis</option><option value="conference">🏛️ Prosiding</option></select>
+          <select class="form-control" id="biblioLang"><option value="all">🌐 Semua Bahasa</option><option value="id">🇮🇩 Indonesia</option><option value="en">🇬🇧 English</option><option value="ar">🇸🇦 Arabic</option></select>
+          <select class="form-control" id="biblioStyle"><option value="APA7">APA 7</option><option value="MLA9">MLA 9</option><option value="Chicago">Chicago</option><option value="Harvard">Harvard</option><option value="Vancouver">Vancouver</option><option value="IEEE">IEEE</option><option value="Turabian">Turabian</option></select>
+        </div>
+        
+        <!-- Quick Topics -->
+        <div class="flex gap-1 mb-1" style="flex-wrap:wrap">
+          <span class="prompt-chip" data-biblio="ekoteologi Islam">🌿 Ekoteologi</span>
+          <span class="prompt-chip" data-biblio="ekonomi syariah digital">💰 Ekonomi Syariah</span>
+          <span class="prompt-chip" data-biblio="AI dalam pendidikan Islam">🤖 AI & Pendidikan</span>
+          <span class="prompt-chip" data-biblio="tafsir al-Qur'an kontemporer">📖 Tafsir</span>
+          <span class="prompt-chip" data-biblio="gender dalam fikih Islam">⚖️ Gender & Fiqh</span>
+          <span class="prompt-chip" data-biblio="pesantren dan modernitas">🏫 Pesantren</span>
+        </div>
+
+        <div class="loading" id="biblioLoading"><div class="spinner"></div><p>Mencari referensi akademik...</p></div>
+
+        <div class="result-section" id="biblioResult">
+          <div class="flex justify-between items-center mb-1">
+            <h4 style="font-size:1rem">📋 Hasil (<span id="biblioCount">0</span> referensi)</h4>
+            <div class="btn-group"><button class="btn btn-outline btn-sm" id="btnCopyAllBiblio">📋 Salin Semua</button><button class="btn btn-outline btn-sm" id="btnExportBiblioDocx">📝 Export DOCX</button></div>
+          </div>
+          
+          <div class="biblio-results" id="biblioResults"></div>
+          
+          <!-- Saved Citations -->
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+            <h4 style="font-size:1rem;margin-bottom:.5rem">📋 Tersimpan (<span id="savedCount">0</span>)</h4>
+            <div id="savedCitations" style="background:var(--bg);padding:.85rem;border-radius:var(--radius-sm);min-height:50px;font-size:.9rem"><em style="color:var(--text-muted)">Klik "+ Simpan" pada referensi untuk menyimpan</em></div>
+            <div class="btn-group" style="margin-top:.5rem">
+              <button class="btn btn-outline btn-sm" id="btnCopySaved">📋 Salin Tersimpan</button>
+              <button class="btn btn-outline btn-sm" id="btnExportSavedDocx">📝 Export Tersimpan</button>
+              <button class="btn btn-danger btn-sm" id="btnClearSaved">🗑️ Hapus Semua</button>
+            </div>
+          </div>
+        </div>
+        <div id="biblioPlaceholder" class="text-center" style="padding:1.5rem;color:var(--text-muted)">Ketik topik penelitian, Claude AI akan generate 10 referensi kredibel</div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: SETTINGS ===== -->
+    <section id="tab-settings" class="tab-content hidden">
+      <div class="card">
+        <h2 class="card-title">🔑 Konfigurasi</h2>
+        <div class="form-group">
+          <label class="form-label">URL Google Apps Script</label>
+          <input type="url" class="form-control" id="gasUrl" placeholder="https://script.google.com/macros/s/.../exec">
+          <small style="color:var(--text-muted);display:block;margin-top:.35rem">URL deployment GAS sebagai proxy Claude API</small>
+        </div>
+        <div class="btn-group">
+          <button class="btn" id="btnSaveConfig">💾 Simpan</button>
+          <button class="btn btn-outline" id="btnTestConnection">⚡ Test Koneksi</button>
+        </div>
+        <div id="connectionTestResult" style="margin-top:.85rem;padding:.85rem;background:var(--bg);border-radius:var(--radius-sm);display:none"></div>
+      </div>
+      
+      <div class="card">
+        <h3 style="margin-bottom:.75rem">📋 Panduan Deploy</h3>
+        <ol style="padding-left:1.25rem;line-height:1.7;font-size:.9rem">
+          <li>Buka <a href="https://script.google.com" target="_blank">script.google.com</a> → Proyek baru</li>
+          <li>Tempel kode <code>AcademIQ_GAS_Backend_v4.gs</code></li>
+          <li>Jalankan <code>setApiKey()</code> dengan API Key Claude Anda (SATU KALI)</li>
+          <li>Deploy Web App: <code>Execute as: Me</code>, <code>Who has access: Anyone</code></li>
+          <li>Salin Web App URL → tempel di field URL → Simpan</li>
+          <li>Klik <strong>Test Koneksi</strong> untuk verifikasi</li>
+        </ol>
+      </div>
+      
+      <div class="card">
+        <h3 style="margin-bottom:.75rem">⚙️ Info Sistem</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:.9rem">
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.5rem;font-weight:500">Model AI</td><td>claude-opus-4-5</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.5rem;font-weight:500">Detector</td><td>15 indikator • 3,500 tokens</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.5rem;font-weight:500">Humanizer</td><td>4 gaya • 4,500 tokens</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.5rem;font-weight:500">Writer</td><td>5 mode • 8,192 tokens • Chat history</td></tr>
+          <tr><td style="padding:.5rem;font-weight:500">Bibliography</td><td>10 referensi • 7 styles • 2,500 tokens</td></tr>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Print Area -->
+  <div id="printArea">
+    <div class="print-header">
+      <div class="print-title">Laporan Akademik — AcademIQ Suite</div>
+      <div class="print-meta" id="printMeta"></div>
+    </div>
+    <div class="print-content" id="printContent"></div>
+    <div class="print-footer">Generated by AcademIQ Suite v4.0 • <span id="printTimestamp"></span></div>
+  </div>
+
+  <script>
+    // === KONFIGURASI ===
+    const CONFIG = { gasUrl: localStorage.getItem('academiq_gas_url') || 'https://script.google.com/macros/s/AKfycbwjZSJIJYMRBhqH6j8ywFBhiuMRrDSInkARx2aVcaXmJ7sdRQFfA96p63BdIyn3857-ag/exec', timeout:120000, writerMode:'professional', chatHistory:JSON.parse(localStorage.getItem('academiq_chat')||'[]'), savedCitations:JSON.parse(localStorage.getItem('academiq_saved')||'[]') };
+    const state = { connected:false, currentTab:'detector', detectorResult:null, humanizedText:'', originalText:'', writerOutput:'', citations:{} };
+    const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+    
+    // === UTILS ===
+    function countWords(t){return t?t.trim().split(/\s+/).filter(w=>w.length>0).length:0}
+    function showAlert(m,t='error'){const a=$('#alertBox');if(!a)return;a.textContent=m;a.className='alert alert-'+t+' active';setTimeout(()=>a.classList.remove('active'),5000)}
+    function setLoading(elId,l){const el=$(elId);if(el)el.classList.toggle('active',l);const map={'detectorLoading':'Analyze','humanizerLoading':'Humanize','biblioLoading':'SearchBiblio','writerLoading':'SendWriter'};const b=$('#btn'+(map[elId.replace('Loading','')]||''));if(b)b.disabled=l}
+    function toggleResult(elId,s){const el=$(elId);if(el)el.classList.toggle('active',s);const ph=$(elId.replace('Result','Placeholder'));if(ph)ph.style.display=s?'none':'block'}
+    function updateConnectionStatus(c,m){state.connected=c;const d=$('#statusDot'),t=$('#statusText');if(d)d.className='status-dot'+(c?' connected':'');if(t)t.textContent=m||(c?'Terhubung':'Belum terhubung');$$('.btn').forEach(b=>{if(b.id&&(b.id.includes('Analyze')||b.id.includes('Humanize')||b.id.includes('Search')||b.id.includes('Send')))b.disabled=!c})}
+    
+    // === API CALL ===
+    async function callGAS(endpoint,payload){
+      const url=$('#gasUrl')?.value?.trim()||localStorage.getItem('academiq_gas_url')||CONFIG.gasUrl;
+      if(!url)return{success:false,error:'URL GAS tidak dikonfigurasi',userMessage:'Konfigurasi URL di Settings'};
+      const req={endpoint,payload:payload||{},timestamp:new Date().toISOString(),version:'4.0.0'};
+      try{
+        const ctrl=new AbortController(),tid=setTimeout(()=>ctrl.abort(),CONFIG.timeout);
+        const r=await fetch(url,{method:'POST',signal:ctrl.signal,body:JSON.stringify(req)});
+        clearTimeout(tid);if(!r.ok)throw new Error('HTTP '+r.status);
+        const res=await r.json();
+        return res?.success?{success:true,data:res.data}:{success:false,error:res?.error||'Unknown',userMessage:res?.error||'Server error'}
+      }catch(e){
+        console.error('❌ Fetch:',e.message);
+        let um='Gagal terhubung.';
+        if(e.message?.includes('Failed to fetch'))um='🔌 Periksa: URL, deployment "Anyone", koneksi, atau ekstensi browser.';
+        else if(e.message?.includes('403')||e.message?.includes('401'))um='🔐 Akses ditolak. Who has access = Anyone';
+        else if(e.message?.includes('timeout'))um='⏰ Timeout. Coba lagi dalam 30 detik.';
+        return{success:false,error:e.message,userMessage:um}
+      }
+    }
+    
+    async function testConnection(){
+      const el=$('#connectionTestResult'),d=$('#statusDot'),t=$('#statusText');
+      if(!el)return false;el.style.display='block';el.className='alert alert-warning active';el.innerHTML='<div style="text-align:center"><div class="spinner"></div><p>🔄 Menguji...</p></div>';
+      if(d)d.className='status-dot testing';if(t)t.textContent='Menguji...';
+      const res=await callGAS('ping',{test:true});
+      if(res.success&&res.data?.status==='connected'){
+        el.className='alert alert-success active';el.innerHTML='<strong>✅ Terhubung!</strong><br>Server: '+(res.data.message||'AcademIQ')+'<br>Waktu: '+(res.data.serverTime?new Date(res.data.serverTime).toLocaleString('id-ID'):'N/A');
+        if(d)d.className='status-dot connected';if(t)t.textContent='Terhubung';state.connected=true;if($('#gasUrl')?.value)CONFIG.gasUrl=$('#gasUrl').value;
+        $$('.btn').forEach(b=>{if(b.id&&(b.id.includes('Analyze')||b.id.includes('Humanize')||b.id.includes('Search')||b.id.includes('Send')))b.disabled=false});return true
+      }else{
+        el.className='alert alert-error active';el.innerHTML='<strong>❌ Gagal</strong><br>'+(res.userMessage||res.error||'Error');
+        if(d)d.className='status-dot';if(t)t.textContent='Gagal';state.connected=false;
+        $$('.btn').forEach(b=>{if(b.id&&(b.id.includes('Analyze')||b.id.includes('Humanize')||b.id.includes('Search')||b.id.includes('Send')))b.disabled=true});return false
+      }
+    }
+    
+    // === FILE UPLOAD HANDLERS ===
+    async function readFile(file){return new Promise((resolve,reject)=>{
+      const ext=file.name.split('.').pop().toLowerCase();
+      if(ext==='txt'){const r=new FileReader();r.onload=e=>resolve(e.target.result);r.onerror=reject;r.readAsText(file)}
+      else if(ext==='docx'){const r=new FileReader();r.onload=async e=>{try{const res=await mammoth.extractRawText({arrayBuffer:e.target.result});resolve(res.value)}catch(err){reject(err)}};r.onerror=reject;r.readAsArrayBuffer(file)}
+      else if(ext==='pdf'){const r=new FileReader();r.onload=async e=>{try{const pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;let txt='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);txt+=await page.getTextContent().then(c=>c.items.map(it=>it.str).join(' '))+'\n'}resolve(txt)}catch(err){reject(err)}};r.onerror=reject;r.readAsArrayBuffer(file)}
+      else reject('Format tidak didukung')
+    })}
+    
+    function setupFileUpload(inputId,dropId,targetTextarea){
+      const input=$(inputId),drop=$(dropId),ta=$(targetTextarea);
+      if(!input||!drop||!ta)return;
+      drop.addEventListener('click',()=>input.click());
+      drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('dragover')});
+      drop.addEventListener('dragleave',()=>drop.classList.remove('dragover'));
+      drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('dragover');handleFile(e.dataTransfer.files[0])});
+      input.addEventListener('change',e=>handleFile(e.target.files[0]));
+      async function handleFile(file){
+        if(!file)return;
+        if(file.size>5*1024*1024){showAlert('⚠️ File maksimal 5MB','warning');return}
+        drop.innerHTML='<div class="spinner" style="margin:0 auto"></div><p>Memproses file...</p>';
+        try{
+          const text=await readFile(file);
+          ta.value=text;ta.dispatchEvent(new Event('input'));
+          drop.innerHTML='<div>📁 Klik atau drag file .docx/.pdf/.txt</div><div style="font-size:.75rem;color:var(--text-muted)">Mendukung: DOCX, PDF, TXT (max 5MB)</div>';
+          showAlert('✅ File berhasil dimuat','success')
+        }catch(err){showAlert('❌ Gagal membaca file: '+err.message,'error');drop.innerHTML='<div>📁 Klik atau drag file .docx/.pdf/.txt</div><div style="font-size:.75rem;color:var(--text-muted)">Mendukung: DOCX, PDF, TXT (max 5MB)</div>'}
+      }
+    }
+    
+    // === TABS ===
+    function initTabs(){$$('.nav-tab').forEach(tab=>{tab.addEventListener('click',()=>{$$('.nav-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');const n=tab.dataset.tab;state.currentTab=n;$$('.tab-content').forEach(c=>c.classList.add('hidden'));const tg=$('#tab-'+n);if(tg)tg.classList.remove('hidden')})})}
+    
+    // === CHAR COUNTERS ===
+    function initCounters(){$$('#detectorInput,#humanizerInput,#writerInput').forEach(inp=>{if(inp)inp.addEventListener('input',e=>{const t=e.target.value;const wc=inp.id.replace('Input','CharCount'),bc=inp.id.replace('Input','ByteCount');if($(wc))$(wc).textContent=countWords(t);if($(bc))$(bc).textContent=t.length})})}
+    
+    // === AI DETECTOR ===
+    function initDetector(){
+      setupFileUpload('#detectorFileInput','#detectorFileDrop','#detectorInput');
+      $('#btnClearDetector')?.addEventListener('click',()=>{$('#detectorInput').value='';$('#detectorCharCount').textContent='0';$('#detectorByteCount').textContent='0';toggleResult('#detectorResult',false)});
+      $('#btnAnalyze')?.addEventListener('click',async()=>{
+        const text=$('#detectorInput')?.value?.trim()||'';
+        if(text.length<100){showAlert('⚠️ Minimal 100 karakter','warning');return}
+        if(!state.connected){showAlert('🔌 Test koneksi di Settings','error');return}
+        setLoading('#detectorLoading',true);toggleResult('#detectorResult',false);
+        const res=await callGAS('detect',{text});
+        setLoading('#detectorLoading',false);
+        if(res.success){renderDetector(res.data);toggleResult('#detectorResult',true);state.detectorResult=res.data}
+        else showAlert(res.userMessage||res.error,'error')
+      });
+      $('#btnCopyDetector')?.addEventListener('click',()=>copyToClipboard(formatDetectorReport()));
+      $('#btnPrintDetector')?.addEventListener('click',()=>printReport('detector'));
+      $('#btnExportDetectorPdf')?.addEventListener('click',()=>exportPDF('detector'));
+      $('#btnExportDetectorDocx')?.addEventListener('click',()=>exportDOCX('detector'))
+    }
+    function renderDetector(d){if(!d)return;const sc=d.aiProbability||0,el=$('#aiScore');if(el){el.textContent=sc+'%';el.style.background=sc<30?'linear-gradient(135deg,#22c55e,#16a34a)':sc<70?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#ef4444,#dc2626)';el.style.webkitBackgroundClip='text';el.style.webkitTextFillColor='transparent'}
+      if($('#aiSummary'))$('#aiSummary').textContent=d.summary||'Tidak ada ringkasan.';
+      const grid=$('#indicatorsGrid');if(grid&&d.indicators){grid.innerHTML='';d.indicators.forEach(ind=>{const lv=(ind.value||'medium').toLowerCase(),c=document.createElement('div');c.className='indicator-card '+lv;c.innerHTML='<div class="indicator-name">'+(ind.name||'')+'</div><div class="indicator-value">'+(ind.value||'—')+'</div><div class="indicator-explanation">'+(ind.explanation||'')+'</div>';grid.appendChild(c)})}
+      const sent=$('#sentenceAnalysis');if(sent){if(d.sentenceAnalysis?.length)sent.innerHTML=d.sentenceAnalysis.map(s=>'<div style="padding:.35rem 0;border-bottom:1px solid var(--border)"><span style="color:'+(s.aiLikelihood==='high'?'#ef4444':s.aiLikelihood==='medium'?'#f59e0b':'#22c55e')+';font-weight:600">['+(s.aiLikelihood||'').toUpperCase()+']</span> '+(s.text||'')+'</div>').join('');else sent.innerHTML='<em>Tidak ada analisis kalimat.</em>'}
+      if($('#recommendation'))$('#recommendation').textContent=d.recommendation||'Tidak ada rekomendasi.'}
+    function formatDetectorReport(){return'=== LAPORAN DETEKSI AI ===\n\nSkor: '+($('#aiScore')?.textContent||'N/A')+'\nRingkasan: '+($('#aiSummary')?.textContent||'')+'\n\nRekomendasi: '+($('#recommendation')?.textContent||'')+'\n\n[Dibuat dengan AcademIQ Suite v4.0]'}
+    
+    // === HUMANIZER ===
+    function initHumanizer(){
+      setupFileUpload('#humanizerFileInput','#humanizerFileDrop','#humanizerInput');
+      $('#btnClearHumanizer')?.addEventListener('click',()=>{$('#humanizerInput').value='';$('#humanizerCharCount').textContent='0';toggleResult('#humanizerResult',false);state.humanizedText='';state.originalText=''});
+      $('#btnHumanize')?.addEventListener('click',async()=>{
+        const text=$('#humanizerInput')?.value?.trim()||'';
+        if(text.length<50){showAlert('⚠️ Minimal 50 karakter','warning');return}
+        if(!state.connected){showAlert('🔌 Test koneksi di Settings','error');return}
+        const style=$('#humanizerStyle')?.value||'professional',reg=$('#humanizerRegister')?.value||'id';
+        setLoading('#humanizerLoading',true);toggleResult('#humanizerResult',false);
+        const res=await callGAS('humanize',{text,style,register:reg});
+        setLoading('#humanizerLoading',false);
+        if(res.success){renderHumanizer(res.data);toggleResult('#humanizerResult',true)}
+        else showAlert(res.userMessage||res.error,'error')
+      });
+      $('#btnShowOriginal')?.addEventListener('click',()=>{$('#originalOutput').style.display='block';$('#humanizedOutput').style.display='none';$('#btnShowOriginal').className='btn btn-sm';$('#btnShowHumanized').className='btn btn-secondary btn-sm'});
+      $('#btnShowHumanized')?.addEventListener('click',()=>{$('#humanizedOutput').style.display='block';$('#originalOutput').style.display='none';$('#btnShowHumanized').className='btn btn-sm';$('#btnShowOriginal').className='btn btn-secondary btn-sm'});
+      $('#btnCopyHumanized')?.addEventListener('click',()=>copyToClipboard(state.humanizedText));
+      $('#btnDownloadHumanized')?.addEventListener('click',()=>downloadText(state.humanizedText,'humanized'));
+      $('#btnPrintHumanizer')?.addEventListener('click',()=>printReport('humanizer'));
+      $('#btnExportHumanizerPdf')?.addEventListener('click',()=>exportPDF('humanizer'));
+      $('#btnExportHumanizerDocx')?.addEventListener('click',()=>exportDOCX('humanizer'))
+    }
+    function renderHumanizer(d){if(!d)return;state.humanizedText=d.humanizedText||'';state.originalText=d.originalText||$('#humanizerInput')?.value||'';
+      if($('#humanizedOutput'))$('#humanizedOutput').textContent=state.humanizedText;if($('#originalOutput'))$('#originalOutput').textContent=state.originalText;
+      $('#humanizedOutput').style.display='block';$('#originalOutput').style.display='none';
+      $('#btnShowHumanized').className='btn btn-sm';$('#btnShowOriginal').className='btn btn-secondary btn-sm';
+      const notes=$('#transformationSummary');if(notes){notes.innerHTML='';(d.transformationNotes||[]).forEach(n=>{const li=document.createElement('li');li.textContent=n;notes.appendChild(li)});if(!d.transformationNotes?.length)notes.innerHTML='<em>Tidak ada catatan.</em>'}}
+    
+    // === WRITER CHAT ===
+    function initWriter(){
+      // Mode buttons
+      $$('.mode-btn').forEach(btn=>{btn.addEventListener('click',()=>{$$('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');CONFIG.writerMode=btn.dataset.mode;showAlert('✅ Mode: '+btn.textContent,'success')})});
+      // Prompt chips
+      $$('.prompt-chip').forEach(chip=>{if(chip.dataset.prompt)chip.addEventListener('click',()=>{const inp=$('#writerInput');if(inp){inp.value=chip.dataset.prompt+' ';inp.focus();inp.dispatchEvent(new Event('input'))}})});
+      // Clear chat
+      $('#btnClearChat')?.addEventListener('click',()=>{CONFIG.chatHistory=[];localStorage.setItem('academiq_chat',JSON.stringify(CONFIG.chatHistory));$('#chatHistory').innerHTML='<div class="chat-message ai">👋 Chat direset. Mulai percakapan baru.</div>';showAlert('✅ Chat history dihapus','success')});
+      // Export chat
+      $('#btnExportChat')?.addEventListener('click',()=>{const txt=CONFIG.chatHistory.map(m=>(m.role==='user'?'You: ':'Claude: ')+m.content).join('\n\n');downloadText(txt,'chat-history')});
+      // Send message
+      async function sendMessage(){
+        const prompt=$('#writerInput')?.value?.trim()||'';
+        if(prompt.length<5){showAlert('⚠️ Prompt minimal 5 karakter','warning');return}
+        if(!state.connected){showAlert('🔌 Test koneksi di Settings','error');return}
+        // Add user message to UI
+        const hist=$('#chatHistory');hist.innerHTML+='<div class="chat-message user">'+escapeHtml(prompt)+'</div>';hist.scrollTop=hist.scrollHeight;
+        CONFIG.chatHistory.push({role:'user',content:prompt,timestamp:new Date().toISOString()});localStorage.setItem('academiq_chat',JSON.stringify(CONFIG.chatHistory));
+        $('#writerInput').value='';$('#writerInput').dispatchEvent(new Event('input'));
+        setLoading('#writerLoading',true);toggleResult('#writerResult',false);
+        const res=await callGAS('write',{prompt,mode:CONFIG.writerMode,history:CONFIG.chatHistory.slice(-10)});
+        setLoading('#writerLoading',false);
+        if(res.success){
+          const text=res.data?.text||'';
+          // Add AI response to UI with streaming effect
+          const aiMsg=document.createElement('div');aiMsg.className='chat-message ai';hist.appendChild(aiMsg);
+          let i=0;const interval=setInterval(()=>{if(i<text.length){aiMsg.innerHTML=escapeHtml(text.substring(0,i+1))+'<span class="streaming-cursor"></span>';i++;hist.scrollTop=hist.scrollHeight}else{clearInterval(interval);aiMsg.innerHTML=escapeHtml(text);CONFIG.chatHistory.push({role:'assistant',content:text,timestamp:new Date().toISOString()});localStorage.setItem('academiq_chat',JSON.stringify(CONFIG.chatHistory));state.writerOutput=text;toggleResult('#writerResult',true);showAlert('✅ Respons siap','success')}},20)
+        }else showAlert(res.userMessage||res.error,'error')
+      }
+      $('#btnSendWriter')?.addEventListener('click',sendMessage);
+      $('#writerInput')?.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();sendMessage()}});
+      // Action buttons
+      $('#btnCopyWriter')?.addEventListener('click',()=>copyToClipboard(state.writerOutput));
+      $('#btnPrintWriter')?.addEventListener('click',()=>printReport('writer'));
+      $('#btnExportWriterPdf')?.addEventListener('click',()=>exportPDF('writer'));
+      $('#btnExportWriterDocx')?.addEventListener('click',()=>exportDOCX('writer'));
+      // Restore chat history
+      if(CONFIG.chatHistory.length>0){const hist=$('#chatHistory');hist.innerHTML='';CONFIG.chatHistory.slice(-20).forEach(m=>{const div=document.createElement('div');div.className='chat-message '+(m.role==='user'?'user':'ai');div.innerHTML=escapeHtml(m.content);hist.appendChild(div)});hist.scrollTop=hist.scrollHeight}
+    }
+    function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+    
+    // === BIBLIOGRAPHY ===
+    function initBibliography(){
+      // Quick topic chips
+      $$('.prompt-chip').forEach(chip=>{if(chip.dataset.biblio)chip.addEventListener('click',()=>{const inp=$('#biblioQuery');if(inp){inp.value=chip.dataset.biblio;searchBiblio()}})});
+      // Search
+      async function searchBiblio(){
+        const query=$('#biblioQuery')?.value?.trim()||'';
+        if(query.length<3){showAlert('⚠️ Kata kunci minimal 3 karakter','warning');return}
+        if(!state.connected){showAlert('🔌 Test koneksi di Settings','error');return}
+        const type=$('#biblioType')?.value||'all',lang=$('#biblioLang')?.value||'all',style=$('#biblioStyle')?.value||'APA7';
+        setLoading('#biblioLoading',true);toggleResult('#biblioResult',false);
+        const res=await callGAS('bibliography_search',{query,type,language:lang,style});
+        setLoading('#biblioLoading',false);
+        if(res.success){renderBiblioResults(res.data);toggleResult('#biblioResult',true)}
+        else showAlert(res.userMessage||res.error,'error')
+      }
+      $('#btnSearchBiblio')?.addEventListener('click',searchBiblio);$('#btnSearchBiblio2')?.addEventListener('click',searchBiblio);
+      $('#biblioQuery')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchBiblio()}});
+      // Clear
+      $('#btnClearBiblio')?.addEventListener('click',()=>{$('#biblioQuery').value='';toggleResult('#biblioResult',false)});
+      // Copy/Export saved
+      $('#btnCopySaved')?.addEventListener('click',()=>copyToClipboard(CONFIG.savedCitations.map(s=>s.citation).join('\n\n')));
+      $('#btnExportSavedDocx')?.addEventListener('click',()=>exportDOCX('saved-citations'));
+      $('#btnClearSaved')?.addEventListener('click',()=>{CONFIG.savedCitations=[];localStorage.setItem('academiq_saved',JSON.stringify(CONFIG.savedCitations));renderSavedCitations();showAlert('✅ Semua referensi dihapus','success')});
+      // Render saved
+      renderSavedCitations()
+    }
+    function renderBiblioResults(d){if(!d)return;const grid=$('#biblioResults'),cnt=$('#biblioCount');if(!grid)return;grid.innerHTML='';const refs=d.references||[];if(cnt)cnt.textContent=refs.length;
+      refs.forEach((ref,idx)=>{const item=document.createElement('div');item.className='biblio-result';
+        item.innerHTML='<div class="biblio-title">'+(ref.title||'Tanpa judul')+'</div><div class="biblio-meta">'+(ref.authors||'Anon')+' • '+(ref.year||'n.d.')+' • '+(ref.type||'Unknown')+' • Relevansi: '+(ref.relevance||5)+'/10</div><div class="citation-text">'+(ref.citation||'—')+'</div><div style="font-size:.8rem;color:var(--text-muted);margin:.35rem 0">'+(ref.abstract||'')+'</div><div class="biblio-actions"><button class="btn btn-outline btn-sm copy-btn" data-idx="'+idx+'">📋 Salin</button><button class="btn btn-success btn-sm" data-save="'+idx+'">+ Simpan</button></div>';
+        grid.appendChild(item)});
+      // Event listeners
+      grid.querySelectorAll('.copy-btn').forEach(btn=>{btn.addEventListener('click',e=>{const idx=parseInt(e.target.dataset.idx),ref=refs[idx];if(ref?.citation)copyToClipboard(ref.citation)})});
+      grid.querySelectorAll('[data-save]').forEach(btn=>{btn.addEventListener('click',e=>{const idx=parseInt(e.target.dataset.save),ref=refs[idx];if(ref&&!CONFIG.savedCitations.some(s=>s.title===ref.title)){CONFIG.savedCitations.push(ref);localStorage.setItem('academiq_saved',JSON.stringify(CONFIG.savedCitations));renderSavedCitations();showAlert('✅ Referensi disimpan','success')}else if(CONFIG.savedCitations.some(s=>s.title===ref.title))showAlert('ℹ️ Sudah tersimpan','warning')})})}
+    function renderSavedCitations(){const cnt=$('#savedCount'),cont=$('#savedCitations');if(cnt)cnt.textContent=CONFIG.savedCitations.length;if(!cont)return;
+      if(!CONFIG.savedCitations.length){cont.innerHTML='<em style="color:var(--text-muted)">Klik "+ Simpan" pada referensi untuk menyimpan</em>';return}
+      cont.innerHTML=CONFIG.savedCitations.map((s,i)=>'<div style="padding:.35rem 0;border-bottom:1px dashed var(--border);font-size:.85rem"><strong>'+(i+1)+'.</strong> '+escapeHtml(s.citation)+' <button class="copy-btn btn-sm" style="margin-left:.35rem" data-saved="'+i+'">📋</button> <button class="btn-danger btn-sm" data-remove="'+i+'" style="margin-left:.25rem">✕</button></div>').join('');
+      cont.querySelectorAll('[data-saved]').forEach(btn=>{btn.addEventListener('click',e=>{const i=parseInt(e.target.dataset.saved);if(CONFIG.savedCitations[i])copyToClipboard(CONFIG.savedCitations[i].citation)})});
+      cont.querySelectorAll('[data-remove]').forEach(btn=>{btn.addEventListener('click',e=>{const i=parseInt(e.target.dataset.remove);CONFIG.savedCitations.splice(i,1);localStorage.setItem('academiq_saved',JSON.stringify(CONFIG.savedCitations));renderSavedCitations();showAlert('✅ Referensi dihapus','success')})})}
+    
+    // === COPY / PRINT / EXPORT ===
+    function copyToClipboard(text){if(!text){showAlert('⚠️ Tidak ada konten','warning');return}
+      if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(()=>showAlert('✅ Disalin','success')).catch(()=>fallbackCopy(text))}else{fallbackCopy(text)}}
+    function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');showAlert('✅ Disalin','success')}catch(e){showAlert('❌ Gagal','error')}document.body.removeChild(ta)}
+    function downloadText(content,filename){if(!content){showAlert('⚠️ Tidak ada konten','warning');return}
+      const blob=new Blob([content],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download=(filename||'download')+'-'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);showAlert('✅ File diunduh','success')}
+    function printReport(type){const meta=$('#printMeta'),cont=$('#printContent'),ts=$('#printTimestamp');if(!meta||!cont||!ts)return;
+      const titles={detector:'Laporan Deteksi AI',humanizer:'Laporan Humanisasi',writer:'Laporan Penulisan AI',bibliography:'Laporan Referensi','saved-citations':'Referensi Tersimpan'};
+      meta.textContent=(titles[type]||'Laporan')+' • '+new Date().toLocaleString('id-ID');ts.textContent=new Date().toLocaleString('id-ID');
+      if(type==='detector')cont.innerHTML='<div class="print-section"><div class="print-section-title">Hasil Deteksi</div><p><strong>Skor AI:</strong> '+($('#aiScore')?.textContent||'N/A')+'</p><p><strong>Ringkasan:</strong> '+($('#aiSummary')?.textContent||'')+'</p><p><strong>Rekomendasi:</strong> '+($('#recommendation')?.textContent||'')+'</p></div>';
+      else if(type==='humanizer')cont.innerHTML='<div class="print-section"><div class="print-section-title">Hasil Humanisasi</div><pre style="white-space:pre-wrap;font-family:inherit">'+(state.humanizedText||'')+'</pre></div>';
+      else if(type==='writer')cont.innerHTML='<div class="print-section"><div class="print-section-title">Hasil Penulisan</div><div style="line-height:1.8">'+(state.writerOutput||'')+'</div></div>';
+      else if(type==='bibliography'||type==='saved-citations')cont.innerHTML='<div class="print-section"><div class="print-section-title">Referensi</div>'+(CONFIG.savedCitations.map((s,i)=>'<p><strong>'+(i+1)+'.</strong> '+escapeHtml(s.citation)+'</p>').join('')||'<em>Tidak ada referensi.</em>')+'</div>';
+      window.print()}
+    function exportPDF(type){showAlert('📄 Memproses PDF...','warning');if(typeof jsPDF==='undefined'){showAlert('❌ Library jsPDF tidak tersedia','error');return}
+      const {jsPDF}=window.jspdf,doc=new jsPDF();doc.setFontSize(14);doc.text('AcademIQ Suite - Laporan',14,20);doc.setFontSize(10);doc.text('Dibuat: '+new Date().toLocaleString('id-ID'),14,30);doc.line(14,35,200,35);
+      let y=45,content='';
+      if(type==='detector')content=formatDetectorReport();else if(type==='humanizer')content=state.humanizedText||'';else if(type==='writer')content=state.writerOutput||'';else if(type==='bibliography'||type==='saved-citations')content=CONFIG.savedCitations.map(s=>s.citation).join('\n\n');
+      const lines=doc.splitTextToSize(content||'Tidak ada konten.',180);lines.forEach(line=>{if(y>280){doc.addPage();y=20}doc.text(line,14,y);y+=7});
+      doc.save('academiq-'+type+'-'+Date.now()+'.pdf');showAlert('✅ PDF diunduh','success')}
+    function exportDOCX(type){showAlert('📝 Fitur DOCX akan tersedia setelah integrasi library docx.js','warning')}
+    
+    // === SETTINGS ===
+    function initSettings(){if($('#gasUrl'))$('#gasUrl').value=CONFIG.gasUrl;
+      $('#btnSaveConfig')?.addEventListener('click',()=>{const url=$('#gasUrl')?.value?.trim()||'';if(!url||!url.includes('script.google.com')){showAlert('⚠️ URL tidak valid','warning');return}CONFIG.gasUrl=url;localStorage.setItem('academiq_gas_url',url);showAlert('✅ Konfigurasi disimpan','success');updateConnectionStatus(false,'Perlu test koneksi')});
+      $('#btnTestConnection')?.addEventListener('click',async()=>{await testConnection()})}
+    
+    // === INIT ===
+    function init(){initTabs();initCounters();initDetector();initHumanizer();initWriter();initBibliography();initSettings();
+      setTimeout(()=>{if(CONFIG.gasUrl)callGAS('ping',{}).then(r=>{if(r.success)updateConnectionStatus(true,'Terhubung')})},1500);console.log('✅ AcademIQ v4.0 initialized')}
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()
+  </script>
+</body>
+</html>
