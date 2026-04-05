@@ -688,5 +688,157 @@
       setTimeout(()=>{if(CONFIG.gasUrl)callGAS('ping',{}).then(r=>{if(r.success)updateConnectionStatus(true,'Terhubung')})},1500);console.log('✅ AcademIQ v4.0 initialized')}
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()
   </script>
+
+
+
+
+<!-- ===== DYNAMIC REAL-TIME FOOTER ===== -->
+<footer style="
+  margin-top: 3rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 30px 30px 0 0;
+  padding: 1.5rem 2rem;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.03);
+">
+  <div style="
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  ">
+    <!-- Left Section: Developer Credit -->
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border-radius: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      ">
+        <i class="fas fa-user-graduate" style="color: white; font-size: 1.2rem;"></i>
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 0.9rem; color: var(--text);">
+          Developed by <span style="background: linear-gradient(135deg, var(--primary), #1e3a8a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">DR. Iskandar, M. Ag.</span>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap;">
+          <i class="fas fa-brain"></i> Pemerhati Hermeneutika Digital
+          <span style="opacity: 0.5;">•</span>
+          <i class="fas fa-code-branch"></i> AcademIQ Suite v3.0
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle / Right Section: Real-time Clock + Stats -->
+    <div style="
+      background: rgba(37, 99, 235, 0.05);
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 0.8rem;
+    ">
+      <!-- Real-time Clock -->
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-clock" style="color: var(--primary);"></i>
+        <span id="realtimeClock" style="font-weight: 500; font-family: monospace;">--:--:--</span>
+      </div>
+      <!-- Live Session Indicator -->
+      <div style="display: flex; align-items: center; gap: 0.4rem;">
+        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
+        <span style="color: var(--text-muted);">Live Session</span>
+      </div>
+      <!-- Dynamic Visitor / Engine Counter (optional fun) -->
+      <div style="display: flex; align-items: center; gap: 0.4rem;">
+        <i class="fas fa-microchip"></i>
+        <span id="engineLoadText" style="font-weight: 500;">Ultra Engine • Standby</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Small bottom copyright line -->
+  <div style="
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 1.2rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed rgba(37, 99, 235, 0.2);
+  ">
+    <i class="fas fa-shield-alt"></i> Academic Integrity First — Inspirasi bukan plagiarisme. 
+    &copy; 2026 • Digital Hermeneutics Lab
+  </div>
+</footer>
+
+<!-- Real-time clock script (non-intrusive, pure JS) -->
+<script>
+  (function() {
+    // Real-time clock update setiap detik
+    function updateClock() {
+      const clockEl = document.getElementById('realtimeClock');
+      if (clockEl) {
+        const now = new Date();
+        const formatted = now.toLocaleTimeString('id-ID', { hour12: false });
+        clockEl.textContent = formatted;
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Dynamic engine load text (random playful namun tetap real-time)
+    const engineStatuses = [
+      'Ultra Engine • Active',
+      'Neural Core • Ready',
+      'Hermeneutic AI • Online',
+      'AcademIQ • Full Power'
+    ];
+    let idx = 0;
+    function rotateEngineText() {
+      const el = document.getElementById('engineLoadText');
+      if (el) {
+        idx = (idx + 1) % engineStatuses.length;
+        el.textContent = engineStatuses[idx];
+      }
+    }
+    // Rotasi setiap 8 detik (tidak mengganggu fungsi utama)
+    setInterval(rotateEngineText, 8000);
+    
+    // Optional: menampilkan status koneksi dari state global (tanpa merusak)
+    // Hanya untuk visual tambahan, tidak menggantikan logika asli
+    if (typeof state !== 'undefined' && state.connected !== undefined) {
+      const sessionIndicator = document.querySelector('.live-session-dot');
+      // tidak perlu mengubah apapun, hanya dekorasi
+    }
+  })();
+</script>
+
+<style>
+  /* tambahan untuk animasi pulse jika belum ada di CSS utama */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+</style>
+
+
+
+
+
+
+
+
+  
 </body>
 </html>
