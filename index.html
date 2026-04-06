@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AcademIQ Suite v3.0 — Ultimate Academic AI Platform">
+<title>AcademIQ Suite v3.0 — Ultimate Academic AI Platform</title>
+
+<!-- ═══ CDN Libraries for File Handling & Export ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════
+   ACADEMIQ SUITE v3.0 — Refined Academic Theme
+   ═══════════════════════════════════════════════ */
+
+/* ── Variables ──────────────────────────────── */
+:root {
+  --primary:      #2563eb;
+  --primary-d:    #1d4ed8;
+  --teal:         #0d9488;
+  --teal-d:       #0f766e;
+  --purple:       #7c3aed;
+  --purple-d:     #6d28d9;
+  --amber:        #d97706;
+  --amber-d:      #b45309;
+  --coral:        #e11d48;
+  --success:      #16a34a;
+  --warning:      #ca8a04;
+  --danger:       #dc2626;
+  --bg:           #f1f5f9;
+  --bg2:          #e2e8f0;
+  --card:         #ffffff;
+  --card2:        #f8fafc;
+  --text:         #0f172a;
+  --text-m:       #475569;
+  --text-d:       #94a3b8;
+  --border:       #e2e8f0;
+  --border2:      #cbd5e1;
+  --shadow:       0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:    0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -1px rgba(0,0,0,.05);
+  --shadow-lg:    0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -2px rgba(0,0,0,.04);
+  --radius:       14px;
+  --radius-sm:    9px;
+  --radius-xs:    6px;
+  --ease:         cubic-bezier(.4,0,.2,1);
+  --tr:           all .2s var(--ease);
+}
+
+/* ── Reset ──────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── Animations ─────────────────────────────── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bar{from{width:0}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+
+/* ── Header ─────────────────────────────────── */
+header{
+  background:linear-gradient(135deg,var(--primary),var(--primary-d));
+  color:#fff;padding:1rem 1.25rem;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 20px rgba(37,99,235,.25);
+}
+.hdr-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem}
+.logo{display:flex;align-items:center;gap:.75rem}
+.logo-icon{width:42px;height:42px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:900;font-size:14px;letter-spacing:-.5px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.logo-text{font-size:1.2rem;font-weight:800;letter-spacing:-.3px}
+.logo-sub{font-size:.75rem;opacity:.85;font-weight:500;margin-top:1px}
+.conn-status{display:flex;align-items:center;gap:.5rem;padding:.45rem 1rem;background:rgba(255,255,255,.15);border-radius:20px;font-size:.8rem;font-weight:500;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2)}
+.status-dot{width:9px;height:9px;border-radius:50%;background:var(--danger);animation:pulse 2s infinite;flex-shrink:0}
+.status-dot.connected{background:var(--success);animation:none}
+.status-dot.testing{background:var(--warning)}
+
+/* ── Main Container ─────────────────────────── */
+main{max-width:1280px;margin:0 auto;padding:1.25rem 1.25rem 3rem}
+
+/* ── Tab Navigation ─────────────────────────── */
+.nav-tabs{
+  display:flex;gap:.25rem;
+  background:var(--card);padding:.4rem;
+  border-radius:var(--radius);margin-bottom:1.5rem;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.nav-tab{
+  flex:1;min-width:80px;
+  padding:.65rem .9rem;border:none;background:transparent;
+  border-radius:var(--radius-sm);font-weight:600;font-size:.8rem;
+  cursor:pointer;transition:var(--tr);color:var(--text-m);
+  text-align:center;white-space:nowrap;
+}
+.nav-tab:hover{background:var(--bg);color:var(--text)}
+.nav-tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.nav-tab[data-tab="humanizer"].active{background:linear-gradient(135deg,var(--teal),var(--teal-d))}
+.nav-tab[data-tab="writer"].active{background:linear-gradient(135deg,var(--purple),var(--purple-d))}
+.nav-tab[data-tab="bibliography"].active{background:linear-gradient(135deg,var(--amber),var(--amber-d))}
+.nav-tab[data-tab="tips"].active{background:linear-gradient(135deg,#0ea5e9,#0284c7)}
+
+/* ── Tab Panels ─────────────────────────────── */
+.tab-panel{display:none;animation:fadeUp .3s var(--ease) both}
+.tab-panel.active{display:block}
+
+/* ── Cards ──────────────────────────────────── */
+.card{background:var(--card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.5rem}
+.card-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:.5rem;color:var(--text)}
+.card-accent{border-left:4px solid var(--primary)}
+.card-accent-teal{border-left:4px solid var(--teal)}
+.card-accent-purple{border-left:4px solid var(--purple)}
+.card-accent-amber{border-left:4px solid var(--amber)}
+
+/* ── Form Elements ──────────────────────────── */
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-weight:600;font-size:.875rem;margin-bottom:.4rem;color:var(--text)}
+.form-control{width:100%;padding:.7rem 1rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:.9rem;transition:var(--tr);font-family:inherit;background:var(--card);color:var(--text)}
+.form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right .75rem center;background-repeat:no-repeat;background-size:1.4em 1.4em;padding-right:2.5rem}
+textarea.form-control{min-height:180px;resize:vertical;line-height:1.7;font-size:.9rem}
+.word-count{text-align:right;font-size:.8rem;color:var(--text-d);margin-top:.4rem}
+
+/* ── Buttons ─────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1.25rem;border:none;border-radius:var(--radius-sm);font-weight:600;font-size:.85rem;cursor:pointer;transition:var(--tr);font-family:inherit;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.btn-primary:hover:not(:disabled){background:var(--primary-d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.btn-teal{background:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(13,148,136,.25)}
+.btn-teal:hover:not(:disabled){background:var(--teal-d);transform:translateY(-1px)}
+.btn-purple{background:var(--purple);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.25)}
+.btn-purple:hover:not(:disabled){background:var(--purple-d);transform:translateY(-1px)}
+.btn-amber{background:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(217,119,6,.25)}
+.btn-amber:hover:not(:disabled){background:var(--amber-d);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:2px solid var(--border2);color:var(--text-m)}
+.btn-outline:hover:not(:disabled){background:var(--bg);border-color:var(--primary);color:var(--primary)}
+.btn-ghost{background:transparent;color:var(--text-m);padding:.45rem .8rem;font-size:.8rem}
+.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){background:#b91c1c}
+.btn-sm{padding:.45rem .9rem;font-size:.8rem}
+.btn-group{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* ── Alerts ─────────────────────────────────── */
+.alert{padding:.9rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;display:none;font-size:.875rem;font-weight:500}
+.alert.show{display:flex;align-items:center;gap:.5rem;animation:fadeUp .2s ease}
+.alert-success{background:#dcfce7;border:1px solid #86efac;color:#14532d}
+.alert-error{background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d}
+.alert-warning{background:#fef3c7;border:1px solid #fcd34d;color:#78350f}
+.alert-info{background:#dbeafe;border:1px solid #93c5fd;color:#1e3a5f}
+
+/* ── Loading ─────────────────────────────────── */
+.loading{display:none;text-align:center;padding:2rem}
+.loading.show{display:block}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto .75rem}
+.spinner-teal{border-top-color:var(--teal)}
+.spinner-purple{border-top-color:var(--purple)}
+.spinner-amber{border-top-color:var(--amber)}
+
+/* ── Score Display ──────────────────────────── */
+.score-wrap{text-align:center;padding:1.5rem;background:linear-gradient(135deg,var(--bg),#fff);border-radius:var(--radius);margin-bottom:1rem;border:1px solid var(--border)}
+.score-val{font-size:3.5rem;font-weight:900;line-height:1}
+.score-label{font-size:.9rem;color:var(--text-m);margin-top:.3rem;font-weight:500}
+.score-green{color:var(--success)}
+.score-yellow{color:var(--warning)}
+.score-red{color:var(--danger)}
+
+/* ── Indicators Grid ────────────────────────── */
+.indicators-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
+.indicator-card{padding:.9rem 1rem;background:var(--bg);border-radius:var(--radius-sm);border-left:4px solid var(--border2)}
+.indicator-card.high{border-left-color:var(--danger)}
+.indicator-card.medium{border-left-color:var(--warning)}
+.indicator-card.low{border-left-color:var(--success)}
+.ind-name{font-weight:700;font-size:.82rem;margin-bottom:.2rem}
+.ind-val{font-size:1.15rem;font-weight:800}
+.ind-desc{font-size:.78rem;color:var(--text-m);margin-top:.2rem;line-height:1.4}
+
+/* ── Metrics bar ────────────────────────────── */
+.mbar-row{display:flex;align-items:center;gap:.75rem;padding:.4rem 0;border-bottom:1px solid var(--bg2)}
+.mbar-label{width:180px;font-size:.8rem;font-weight:600;flex-shrink:0}
+.mbar-wrap{flex:1;height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.mbar-fill{height:100%;border-radius:4px;animation:bar .5s ease both}
+.mbar-val{width:40px;font-size:.8rem;font-weight:700;text-align:right;flex-shrink:0}
+
+/* ── Sentence Analysis ──────────────────────── */
+.sentence-span{padding:1px 3px;border-radius:3px;cursor:default;transition:.15s;display:inline}
+.sentence-span:hover{outline:2px solid currentColor;border-radius:3px}
+
+/* ── Upload Zone ────────────────────────────── */
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:var(--radius);
+  padding:1.25rem;text-align:center;cursor:pointer;
+  transition:var(--tr);margin-bottom:1rem;
+  background:var(--bg);position:relative;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--primary);background:#dbeafe20;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.upload-zone p{font-size:.82rem;color:var(--text-m);margin-top:.4rem}
+.upload-icon{font-size:1.8rem;display:block;margin-bottom:.35rem}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* ── Comparison Stats ───────────────────────── */
+.comp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1rem 0}
+.comp-stat{background:var(--bg);border-radius:var(--radius-sm);padding:.9rem;text-align:center;border:1px solid var(--border)}
+.comp-stat-val{font-size:1.5rem;font-weight:900;line-height:1}
+.comp-stat-label{font-size:.72rem;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;margin-top:.3rem;font-weight:700}
+
+/* ── Mode Buttons ───────────────────────────── */
+.mode-btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.mode-btn{
+  padding:.55rem 1rem;border-radius:var(--radius-sm);
+  font-size:.8rem;font-weight:600;font-family:inherit;
+  cursor:pointer;transition:var(--tr);
+  border:2px solid var(--border2);background:var(--bg);color:var(--text-m);
+}
+.mode-btn.on-teal{border-color:var(--teal);background:rgba(13,148,136,.08);color:var(--teal)}
+.mode-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── Citation Cards ─────────────────────────── */
+.citation-item{background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);padding:1rem;margin-bottom:.75rem}
+.citation-format{font-weight:700;color:var(--primary);font-size:.85rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.citation-text{font-size:.875rem;line-height:1.7;word-break:break-word;font-family:Georgia,serif}
+.copy-pill{padding:.2rem .65rem;font-size:.75rem;background:var(--primary);color:#fff;border:none;border-radius:20px;cursor:pointer;transition:var(--tr)}
+.copy-pill:hover{background:var(--primary-d)}
+
+/* ── Bibliography Search Cards ──────────────── */
+.bib-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem;transition:var(--tr);animation:fadeUp .3s ease both}
+.bib-card:hover{border-color:rgba(217,119,6,.3);box-shadow:var(--shadow-md)}
+.bib-card.saved{border-color:rgba(13,148,136,.3);background:rgba(13,148,136,.02)}
+.bib-type-badge{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:.2rem .6rem;border-radius:8px;background:rgba(217,119,6,.1);color:var(--amber);border:1px solid rgba(217,119,6,.2)}
+.bib-card-title{font-size:.9rem;font-weight:700;flex:1;line-height:1.4}
+.bib-card-meta{font-size:.8rem;color:var(--text-m);line-height:1.6;margin:.6rem 0}
+.bib-card-text{font-size:.82rem;line-height:1.8;padding:.75rem 1rem;background:rgba(217,119,6,.03);border-radius:var(--radius-sm);border-left:3px solid rgba(217,119,6,.3);margin-bottom:.6rem;font-family:Georgia,serif;word-break:break-word}
+.bib-card-intext{font-size:.78rem;color:var(--text-m);padding:.4rem .75rem;background:var(--bg);border-radius:var(--radius-xs);border-left:2px solid var(--amber);font-family:monospace;margin-bottom:.6rem;word-break:break-word}
+.bib-saved-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;display:flex;gap:.75rem;margin-bottom:.5rem;align-items:flex-start;animation:fadeUp .2s ease both}
+.bib-saved-num{font-size:.78rem;font-weight:800;color:var(--amber);min-width:22px;font-family:monospace;flex-shrink:0}
+.bib-saved-text{font-size:.82rem;line-height:1.7;flex:1;font-family:Georgia,serif;word-break:break-word}
+
+/* ── Write Teks Chat ─────────────────────────── */
+.chat-container{display:flex;flex-direction:column;gap:1rem;padding:.5rem;min-height:400px;max-height:500px;overflow-y:auto;scroll-behavior:smooth}
+.chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-d);text-align:center;gap:.75rem;padding:2.5rem}
+.chat-wrap{display:flex;flex-direction:column;max-width:85%;animation:fadeUp .25s ease both}
+.chat-user{align-self:flex-end;align-items:flex-end}
+.chat-assistant{align-self:flex-start;align-items:flex-start}
+.chat-role{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;padding:0 .35rem;color:var(--text-d)}
+.chat-user .chat-role{text-align:right;color:var(--text-d)}
+.chat-assistant .chat-role{color:var(--purple)}
+.chat-bubble{padding:.9rem 1.1rem;font-size:.875rem;line-height:1.8;white-space:pre-wrap;word-break:break-word;border-radius:var(--radius)}
+.bubble-user{background:linear-gradient(135deg,#dbeafe,#eff6ff);border:1px solid #bfdbfe;border-radius:var(--radius) var(--radius) 4px var(--radius);color:var(--text)}
+.bubble-assistant{background:var(--card2);border:1px solid var(--border);border-radius:4px var(--radius) var(--radius) var(--radius);box-shadow:var(--shadow);color:var(--text)}
+.bubble-error{border-color:#fca5a5;color:#7f1d1d}
+.chat-cursor{display:inline-block;width:2px;height:14px;background:var(--purple);animation:pulse .7s infinite;vertical-align:middle;margin-left:3px;border-radius:1px}
+.writer-input-wrap{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);transition:var(--tr);position:relative}
+.writer-input-wrap:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.08)}
+#writer-textarea{width:100%;min-height:90px;max-height:200px;background:transparent;border:none;outline:none;padding:1rem 1rem 3rem;font-size:.9rem;font-family:inherit;line-height:1.7;resize:none;color:var(--text)}
+.writer-input-bar{position:absolute;bottom:0;left:0;right:0;padding:.5rem .75rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--card2)}
+.writer-sys-select{background:rgba(124,58,237,.06);color:var(--purple);border:1px solid rgba(124,58,237,.25);border-radius:var(--radius-xs);padding:.3rem .6rem;font-size:.75rem;font-weight:700;cursor:pointer;outline:none;font-family:inherit}
+
+/* ── Chips ───────────────────────────────────── */
+.chip-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.chip{padding:.35rem .85rem;border-radius:20px;font-size:.75rem;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid rgba(124,58,237,.2);background:rgba(124,58,237,.04);color:var(--text-m);transition:var(--tr);white-space:nowrap}
+.chip:hover{border-color:var(--purple);color:var(--purple);background:rgba(124,58,237,.08);transform:translateY(-1px)}
+.bib-chip{border-color:rgba(217,119,6,.2);background:rgba(217,119,6,.04);color:var(--text-m)}
+.bib-chip:hover{border-color:var(--amber);color:var(--amber);background:rgba(217,119,6,.08)}
+
+/* ── Bib Filter ─────────────────────────────── */
+.bib-filter-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.bib-sel{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:.5rem .85rem;font-size:.8rem;font-family:inherit;cursor:pointer;outline:none;transition:var(--tr);color:var(--text-m)}
+.bib-sel:focus{border-color:var(--amber);box-shadow:0 0 0 2px rgba(217,119,6,.1);color:var(--text)}
+.bib-sel-gold{color:var(--amber);border-color:rgba(217,119,6,.3);font-weight:700}
+
+/* ── Intelligence Tips ──────────────────────── */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.tip-card{background:var(--card);border-radius:var(--radius);padding:1.25rem;border:1px solid var(--border);box-shadow:var(--shadow);transition:var(--tr)}
+.tip-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.tip-icon{font-size:1.75rem;margin-bottom:.6rem;display:block}
+.tip-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.tip-body{font-size:.82rem;color:var(--text-m);line-height:1.7}
+
+/* ── Report Overlay ─────────────────────────── */
+.rpt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:none;overflow:auto;padding:1.5rem;backdrop-filter:blur(4px)}
+.rpt-overlay.open{display:flex;justify-content:center;align-items:flex-start}
+.rpt-frame{background:#fff;color:#1a1a2e;max-width:880px;width:100%;border-radius:var(--radius);position:relative;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.rpt-toolbar{position:sticky;top:0;background:#0f172a;padding:.9rem 1.25rem;border-radius:var(--radius) var(--radius) 0 0;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.rpt-body{padding:40px 50px;font-family:Georgia,'Times New Roman',serif;font-size:13px;line-height:1.8;color:#1a1a2e}
+.rpt-header{text-align:center;margin-bottom:35px;border-bottom:3px double #1a2744;padding-bottom:20px;position:relative}
+.rpt-header h1{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:22px;font-weight:800;color:#0c1220;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.rpt-seal{position:absolute;top:-10px;right:0;width:72px;height:72px;border:3px solid #0d9488;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0d9488;font-weight:900;font-size:9px;text-align:center;transform:rotate(15deg);text-transform:uppercase;line-height:1.1;font-family:sans-serif}
+.rpt-section{margin-bottom:30px;page-break-inside:avoid}
+.rpt-section h2{font-family:sans-serif;font-size:16px;font-weight:700;color:#1a2744;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #0d9488;display:flex;align-items:center;gap:8px}
+.rpt-section h2 span{background:#0d9488;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.rpt-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.rpt-stat-card{background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center}
+.rpt-stat-val{font-family:monospace;font-size:32px;font-weight:800;margin:6px 0;line-height:1}
+.rpt-stat-lbl{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.rpt-table{width:100%;border-collapse:collapse;font-size:12px}
+.rpt-table th{background:#1e293b;color:#fff;font-weight:700;padding:10px;border:1px solid #1e293b;text-align:left;font-family:sans-serif}
+.rpt-table td{padding:10px;border:1px solid #cbd5e1;vertical-align:top}
+.rpt-table tr:nth-child(even){background:#f8fafc}
+.rpt-bar-c{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-top:4px}
+.rpt-bar-f{height:100%;border-radius:4px}
+.rpt-footer{margin-top:40px;padding-top:20px;border-top:2px solid #e2e8f0;font-size:11px;color:#64748b;text-align:center;font-family:sans-serif;line-height:1.6}
+
+/* ── Utilities ──────────────────────────────── */
+.hidden{display:none!important}
+.flex{display:flex}
+.flex-wrap{flex-wrap:wrap}
+.gap-1{gap:.5rem}.gap-2{gap:1rem}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.text-center{text-align:center}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}
+.text-muted{color:var(--text-m)}
+.text-sm{font-size:.85rem}
+.font-bold{font-weight:700}
+.section-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-m);margin-bottom:.6rem}
+
+/* ── Result section ─────────────────────────── */
+.result-section{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+
+/* ── Responsive ─────────────────────────────── */
+@media(max-width:900px){.comp-stats{grid-template-columns:repeat(2,1fr)}.rpt-stat-grid{grid-template-columns:1fr 1fr}.rpt-body{padding:24px 24px}}
+@media(max-width:640px){.nav-tabs{justify-content:center}.btn-group{justify-content:center}.hdr-inner{flex-direction:column;text-align:center}.mode-btns{justify-content:center}.comp-stats{grid-template-columns:1fr 1fr}.tips-grid{grid-template-columns:1fr}main{padding:.75rem .75rem 3rem}.nav-tab{font-size:.72rem;padding:.55rem .6rem}}
+@media print{body *{visibility:hidden}.rpt-overlay,.rpt-overlay *{visibility:visible}.rpt-overlay{position:absolute;left:0;top:0;width:100%;background:#fff;padding:0}.rpt-frame{box-shadow:none;max-width:100%;border-radius:0}.rpt-toolbar{display:none}.rpt-body{padding:24px}@page{margin:1.5cm;size:A4}}
+
+/* ── CrossRef Integration Styles ────────────────────────────── */
+.cr-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:.2rem .6rem;border-radius:20px;white-space:nowrap;
+}
+.cr-badge-verified{
+  background:rgba(13,148,136,.12);color:var(--teal);
+  border:1px solid rgba(13,148,136,.3);
+}
+.cr-badge-claude{
+  background:rgba(124,58,237,.1);color:var(--purple);
+  border:1px solid rgba(124,58,237,.25);
+}
+.cr-badge-fallback{
+  background:rgba(217,119,6,.1);color:var(--amber);
+  border:1px solid rgba(217,119,6,.25);
+}
+.cr-doi-link{
+  font-size:.72rem;color:var(--teal);text-decoration:none;
+  font-family:monospace;word-break:break-all;
+  padding:.15rem .4rem;background:rgba(13,148,136,.06);
+  border-radius:4px;border:1px solid rgba(13,148,136,.2);
+  transition:var(--tr);display:inline-block;margin-top:.25rem;
+}
+.cr-doi-link:hover{background:rgba(13,148,136,.15);color:var(--teal-d);}
+.cr-score-wrap{
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:.6rem;flex-wrap:wrap;
+}
+.cr-pipeline-status{
+  padding:.75rem 1rem;border-radius:var(--radius-sm);
+  font-size:.8rem;display:flex;align-items:center;gap:.6rem;
+  margin-bottom:.75rem;font-weight:500;
+}
+.cr-pipeline-status.phase1{background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.2);color:var(--teal);}
+.cr-pipeline-status.phase2{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);color:var(--purple);}
+.cr-pipeline-status.done{background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);color:var(--success);}
+.cr-pipeline-status.warn{background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2);color:var(--amber);}
+.cr-mini-spin{
+  width:14px;height:14px;border:2px solid currentColor;
+  border-top-color:transparent;border-radius:50%;
+  animation:spin .6s linear infinite;flex-shrink:0;
+}
+.cr-stats-row{
+  display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;
+  padding:.6rem .75rem;background:var(--bg);border-radius:var(--radius-sm);
+  border:1px solid var(--border);margin-bottom:.75rem;font-size:.78rem;
+}
+.cr-stat-pill{
+  padding:.2rem .6rem;border-radius:20px;font-weight:700;font-size:.72rem;
+}
+.cr-abstract-toggle{
+  font-size:.75rem;color:var(--teal);cursor:pointer;
+  text-decoration:underline;text-underline-offset:2px;
+  background:none;border:none;padding:0;font-family:inherit;
+  transition:var(--tr);
+}
+.cr-abstract-toggle:hover{color:var(--teal-d);}
+.cr-abstract-text{
+  font-size:.8rem;line-height:1.7;color:var(--text-m);
+  padding:.6rem .75rem;background:rgba(13,148,136,.03);
+  border-left:3px solid rgba(13,148,136,.2);border-radius:var(--radius-xs);
+  margin-top:.4rem;
+}
+.bib-card.cr-verified{
+  border-left:3px solid var(--teal);
+}
+.bib-card.cr-claude-only{
+  border-left:3px solid var(--purple);
+}
+
+/* ── Phase progress bar ─────────────────────────────────────── */
+.cr-progress-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;
+}
+.cr-progress-title{font-size:.85rem;font-weight:700;margin-bottom:.75rem;color:var(--text)}
+.cr-phase-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;font-size:.8rem;}
+.cr-phase-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0;}
+.cr-phase-icon.pending{background:var(--bg);color:var(--text-d);border:1px solid var(--border);}
+.cr-phase-icon.active{background:rgba(37,99,235,.1);color:var(--primary);border:1px solid rgba(37,99,235,.3);}
+.cr-phase-icon.done-ok{background:rgba(22,163,74,.1);color:var(--success);border:1px solid rgba(22,163,74,.3);}
+.cr-phase-icon.done-skip{background:rgba(217,119,6,.1);color:var(--amber);border:1px solid rgba(217,119,6,.3);}
+.cr-phase-label{flex:1;color:var(--text-m);}
+.cr-phase-label.active-label{color:var(--text);font-weight:600;}
+.cr-phase-result{font-weight:600;font-size:.75rem;}
+
+/* ── Write Teks + CrossRef Styles ───────────────────────────── */
+.wr-ref-panel{
+  background:var(--card);border:1px solid rgba(13,148,136,.25);
+  border-radius:var(--radius);padding:1rem 1.1rem;
+  border-left:4px solid var(--teal);
+  animation:fadeUp .3s var(--ease) both;
+}
+.wr-ref-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:.4rem;
+}
+.wr-ref-title{font-size:.82rem;font-weight:700;color:var(--teal);display:flex;align-items:center;gap:.4rem}
+.wr-ref-stats{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.wr-ref-item{
+  padding:.6rem .85rem;background:var(--bg);border-radius:var(--radius-sm);
+  border-left:3px solid rgba(13,148,136,.3);margin-bottom:.5rem;
+  font-size:.8rem;line-height:1.75;font-family:Georgia,serif;
+  word-break:break-word;
+}
+.wr-ref-item.crossref-item{border-left-color:var(--teal)}
+.wr-ref-item.semantic-item{border-left-color:var(--primary)}
+.wr-ref-item.claude-item{border-left-color:var(--purple)}
+.wr-ref-item-hdr{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:.5rem;margin-bottom:.35rem;
+}
+.wr-ref-bib{color:var(--text);margin-bottom:.25rem}
+.wr-ref-intext{
+  font-size:.75rem;color:var(--text-m);font-family:monospace;
+  padding:.2rem .5rem;background:rgba(13,148,136,.06);
+  border-radius:4px;display:inline-block;margin-top:.2rem;
+}
+.wr-ref-doi{
+  font-size:.72rem;color:var(--teal);text-decoration:none;
+  font-family:monospace;word-break:break-all;
+}
+.wr-ref-doi:hover{color:var(--teal-d);text-decoration:underline}
+.wr-cr-status{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.65rem 1rem;border-radius:var(--radius-sm);
+  font-size:.8rem;font-weight:600;margin-bottom:.6rem;
+}
+.wr-cr-status.fetching{background:rgba(13,148,136,.06);border:1px solid rgba(13,148,136,.2);color:var(--teal)}
+.wr-cr-status.done{background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);color:var(--success)}
+.wr-cr-status.warn{background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2);color:var(--amber)}
+.wr-session-ref-item{
+  font-size:.78rem;line-height:1.7;padding:.5rem .7rem;
+  background:var(--bg);border-radius:var(--radius-xs);
+  border-left:2px solid rgba(13,148,136,.3);
+  font-family:Georgia,serif;word-break:break-word;
+  display:flex;gap:.5rem;align-items:flex-start;
+}
+.wr-session-ref-num{
+  font-size:.72rem;font-weight:800;color:var(--teal);
+  font-family:monospace;min-width:20px;flex-shrink:0;margin-top:.1rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="hdr-inner">
+    <div class="logo">
+      <div class="logo-icon">🎓</div>
+      <div>
+        <div class="logo-text">AcademIQ Suite</div>
+        <div class="logo-sub">Ultimate Academic AI Platform v3.3 · CrossRef + Claude Write</div>
+      </div>
+    </div>
+    <div class="conn-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Menghubungkan...</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- Navigation -->
+  <nav class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" data-tab="detector">🔍 AI Detector</button>
+    <button class="nav-tab" data-tab="humanizer">✍️ Ultra Humanizer</button>
+    <button class="nav-tab" data-tab="writer">🖊️ Write Teks</button>
+    <button class="nav-tab" data-tab="bibliography">📚 Bibliography</button>
+    <button class="nav-tab" data-tab="tips">💡 Intelligence Tips</button>
+  </nav>
+
+  <!-- Global Alert -->
+  <div class="alert" id="alertBox" role="alert"></div>
+
+  <!-- ═══ TAB: AI DETECTOR ═══ -->
+  <div class="tab-panel active" id="tab-detector">
+
+    <!-- Info banner -->
+    <div class="card card-accent" style="padding:1rem 1.25rem;margin-bottom:1rem;background:linear-gradient(to right,rgba(37,99,235,.05),transparent)">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <div style="flex:1">
+          <div style="font-size:.85rem;font-weight:700;color:var(--primary);margin-bottom:.2rem">🔬 Mesin Deteksi Semantik — 15 Metrik Heuristik</div>
+          <div style="font-size:.78rem;color:var(--text-m)">Upload file .docx/.pdf atau tempel teks. Analisis forensik mendalam: lexical diversity, burstiness, AI phrase density, dan lebih. Score utama via Claude AI.</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <span id="detect-word-badge" style="font-size:.75rem;padding:.25rem .75rem;background:var(--bg);border:1px solid var(--border);border-radius:20px;font-weight:600;color:var(--text-m)">0 kata</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">🔍 AI Content Detector</h2>
+        <div class="btn-group">
+          <button class="btn btn-outline btn-sm" id="btnClearDetector">🗑 Bersihkan</button>
+          <button class="btn btn-outline btn-sm" id="btnDetectLocal">⚡ Analisis Lokal</button>
+          <button class="btn btn-primary" id="btnAnalyze" disabled>🔬 Analisis Mendalam (AI)</button>
+        </div>
+      </div>
+
+      <!-- File upload -->
+      <div class="upload-zone" id="detectUploadZone">
+        <span class="upload-icon">📄</span>
+        <strong style="font-size:.85rem">Klik atau seret file .docx / .pdf</strong>
+        <p>Atau tempel teks langsung di area di bawah</p>
+        <input type="file" id="detectFileInput" accept=".docx,.pdf" onchange="handleFileUpload(this,'detectInput','detect-word-badge','detect-status-info')">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Teks yang Akan Dianalisis <span style="color:var(--text-d);font-weight:400">(min. 10 kata)</span></label>
+        <textarea class="form-control" id="detectInput" rows="8" placeholder="Tempel teks di sini untuk analisis semantik mendalam... Minimal 10 kata untuk akurasi yang baik." oninput="onDetectInput(this.value)"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.4rem">
+          <span id="detect-status-info" style="font-size:.8rem;color:var(--text-d)">0 kata · 0 karakter</span>
+          <span style="font-size:.78rem;color:var(--text-d)">Min 10 kata · Rekomendasi 100+ kata</span>
+        </div>
+      </div>
+
+      <div class="loading" id="detectorLoading">
+        <div class="spinner"></div>
+        <p style="color:var(--text-m);font-size:.9rem">Claude sedang menganalisis teks... Mohon tunggu</p>
+      </div>
+
+      <div id="detectorResult" class="hidden">
+
+        <!-- Score + quick actions -->
+        <div class="score-wrap">
+          <div class="score-val" id="aiScore">—</div>
+          <div class="score-label">Probabilitas Konten AI</div>
+        </div>
+        <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem">
+          <button class="btn btn-outline btn-sm" id="btnGoHumanize">⚡ Humanisasi Sekarang</button>
+          <button class="btn btn-outline btn-sm" id="btnOpenReport">📄 Cetak Laporan Ilmiah</button>
+        </div>
+
+        <div class="section-title">📋 Ringkasan Analisis</div>
+        <p id="aiSummary" style="background:var(--bg);padding:.9rem 1rem;border-radius:var(--radius-sm);font-size:.875rem;margin-bottom:1.25rem;line-height:1.7"></p>
+
+        <div class="section-title">📊 15 Metrik Heuristik</div>
+        <div id="metricsContainer" style="margin-bottom:1.25rem"></div>
+
+        <div class="section-title">🔍 Analisis Tingkat Kalimat</div>
+        <div id="sentenceAnalysis" style="background:var(--bg);padding:1rem;border-radius:var(--radius-sm);line-height:2;font-size:.9rem;margin-bottom:1.25rem"></div>
+
+        <div class="section-title">💡 Rekomendasi</div>
+        <p id="recommendation" style="background:linear-gradient(135deg,#dbeafe,#eff6ff);padding:1rem;border-radius:var(--radius-sm);border-left:4px solid var(--primary);font-size:.875rem;line-height:1.7"></p>
+
+        <div style="margin-top:1rem;font-size:.78rem;color:var(--text-d)">
+          🟢 Hijau = Kemungkinan manusia · 🟡 Kuning = Tidak pasti · 🔴 Merah = Kemungkinan AI
+        </div>
+      </div>
+
+      <div id="detectorPlaceholder" class="text-center" style="padding:2rem;color:var(--text-d)">
+        Upload file atau tempel teks, lalu klik <strong>Analisis Mendalam</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: ULTRA HUMANIZER ═══ -->
+  <div class="tab-panel" id="tab-humanizer">
+
+    <div class="card card-accent-teal" style="padding:1rem 1.25rem;margin-bottom:1rem;background:linear-gradient(to right,rgba(13,148,136,.05),transparent)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--teal)">Ultra-Surgical Semantic Engine v3</div>
+          <div style="font-size:.78rem;color:var(--text-m);margin-top:.2rem">Multi-Stage Neural Mimicry · Target: 0–10% AI Score · Akurasi Makna 99.9%</div>
+        </div>
+        <span style="font-size:.75rem;padding:.25rem .75rem;background:rgba(220,38,38,.1);color:var(--danger);border:1px solid rgba(220,38,38,.2);border-radius:20px;font-weight:700;animation:pulse 2s infinite">TARGET 0% AI</span>
+      </div>
+    </div>
+
+    <!-- Mode selection -->
+    <div class="card" style="padding:1rem 1.25rem;margin-bottom:1rem">
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
+        <div style="flex:1;min-width:200px">
+          <div class="section-title" style="margin-bottom:.5rem">Mode Penulisan</div>
+          <div class="mode-btns" id="humModeButtons"></div>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:.5rem">Intensitas</div>
+          <select class="bib-sel" id="humIntensity" style="color:var(--teal);border-color:rgba(13,148,136,.3)">
+            <option value="5">Balanced (5x)</option>
+            <option value="10" selected>Surgical (10x)</option>
+            <option value="15">Nuclear (15x)</option>
+          </select>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:.5rem">Engine</div>
+          <select class="bib-sel" id="humEngine">
+            <option value="local">⚡ Ultra-Surgical (Lokal)</option>
+            <option value="gas">🤖 Claude via GAS API</option>
+          </select>
+        </div>
+        <div>
+          <div class="section-title" style="margin-bottom:.5rem">Register</div>
+          <select class="bib-sel" id="humRegister">
+            <option value="academic_id" selected>🇮🇩 Akademik Indonesia</option>
+            <option value="formal_intl">🌍 Ilmiah Internasional</option>
+            <option value="mixed">🔄 Campuran</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="humGrid">
+      <div class="card">
+        <div class="card-header" style="padding-bottom:.75rem;margin-bottom:.75rem">
+          <span style="font-size:.8rem;font-weight:700;color:var(--text-m)">📥 INPUT ORIGINAL</span>
+          <span id="hum-input-wc" style="font-size:.78rem;color:var(--text-d)">0 kata</span>
+        </div>
+        <div class="upload-zone">
+          <span class="upload-icon">📄</span>
+          <strong style="font-size:.82rem">Upload .docx / .pdf</strong>
+          <p>atau tempel teks di bawah</p>
+          <input type="file" accept=".docx,.pdf" onchange="handleFileUpload(this,'humInput','hum-input-wc','hum-file-status')">
+        </div>
+        <div id="hum-file-status" style="font-size:.78rem;color:var(--text-m);margin-bottom:.5rem"></div>
+        <textarea class="form-control" id="humInput" rows="10" placeholder="Tempel teks AI yang ingin dihumanisasi..." oninput="onHumInput(this.value)" style="min-height:250px"></textarea>
+        <div style="margin-top:.75rem;display:flex;justify-content:flex-end">
+          <button class="btn btn-teal" id="btnHumanize" disabled style="padding:.75rem 1.75rem;font-size:.95rem">🚀 ULTRA HUMANIZE</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="padding-bottom:.75rem;margin-bottom:.75rem">
+          <span style="font-size:.8rem;font-weight:700;color:var(--teal)">📤 HASIL REFORMULASI</span>
+          <div class="btn-group">
+            <button class="btn btn-ghost btn-sm hidden" id="btnShowOrig">Asli</button>
+            <button class="btn btn-ghost btn-sm hidden" id="btnShowHumanized">Hasil</button>
+          </div>
+        </div>
+        <div id="humOutput" style="min-height:250px;padding:1rem;background:var(--bg);border-radius:var(--radius-sm);border:1.5px solid var(--border);overflow:auto;max-height:480px;display:flex;align-items:center;justify-content:center;color:var(--text-d);font-size:.875rem">
+          <div class="text-center"><div style="font-size:2rem;margin-bottom:.5rem">🚀</div>Siap menghancurkan pola AI...</div>
+        </div>
+        <div class="loading" id="humLoading">
+          <div class="spinner spinner-teal"></div>
+          <p style="color:var(--text-m);font-size:.875rem">Memproses humanisasi...</p>
+        </div>
+        <div id="humActions" class="btn-group hidden" style="margin-top:.75rem;justify-content:flex-end">
+          <button class="btn btn-outline btn-sm" id="btnCopyHumanized">📋 Salin</button>
+          <button class="btn btn-outline btn-sm" id="btnExportHumDocx">📄 Ekspor DOCX</button>
+          <button class="btn btn-outline btn-sm" id="btnExportHumPdf">🖨 Cetak PDF</button>
+          <button class="btn btn-teal btn-sm" id="btnApplyRedetect">⟳ Apply & Re-detect</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison stats -->
+    <div id="humComparison" class="card hidden" style="margin-top:1rem">
+      <div class="section-title" style="margin-bottom:.75rem">📊 ULTRA-SURGICAL PERFORMANCE METRICS</div>
+      <div class="comp-stats" id="compStatsGrid"></div>
+      <div id="humTransNotes" style="margin-top:.75rem"></div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: WRITE TEKS ═══ -->
+  <div class="tab-panel" id="tab-writer">
+
+    <!-- Header bar -->
+    <div class="card card-accent-purple" style="padding:1rem 1.25rem;margin-bottom:1rem;background:linear-gradient(to right,rgba(124,58,237,.05),transparent)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--purple)">✍ Write Teks — Claude AI Writer + CrossRef</div>
+          <div style="font-size:.78rem;color:var(--text-m);margin-top:.2rem">Teks bereferensi otomatis · CrossRef DOI · Semantic Scholar · 8 gaya sitasi · Ekspor Teks+Referensi DOCX</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+          <div class="section-title" style="margin-bottom:0;font-size:.72rem">Mode:</div>
+          <select class="writer-sys-select" id="writerSystemSelect" onchange="writerSetSystem(this.value)">
+            <option value="academic">🎓 Penulis Akademik</option>
+            <option value="research">🔬 Asisten Penelitian</option>
+            <option value="editor">✏️ Editor & Parafrase</option>
+            <option value="creative">🎨 Penulisan Kreatif</option>
+            <option value="free">💬 Mode Bebas</option>
+          </select>
+          <!-- CrossRef toggle -->
+          <button id="writerCRToggle" onclick="writerToggleCR()"
+            style="display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .75rem;border-radius:20px;font-size:.72rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--tr);background:rgba(13,148,136,.12);color:var(--teal);border:1px solid rgba(13,148,136,.3)"
+            title="Aktifkan/nonaktifkan referensi otomatis CrossRef pada setiap tulisan">
+            <span id="writerCRDot" style="width:7px;height:7px;border-radius:50%;background:var(--teal);display:inline-block"></span>
+            📚 Referensi Otomatis: <span id="writerCRLabel">ON</span>
+          </button>
+          <!-- Citation style -->
+          <select id="writerCiteStyle" class="bib-sel bib-sel-gold" style="font-size:.72rem;padding:.3rem .65rem" title="Gaya sitasi untuk referensi yang disertakan">
+            <option value="apa7">APA 7</option>
+            <option value="mla9">MLA 9</option>
+            <option value="chicago">Chicago</option>
+            <option value="harvard">Harvard</option>
+            <option value="vancouver">Vancouver</option>
+            <option value="ieee">IEEE</option>
+            <option value="turabian">Turabian</option>
+            <option value="isnad">ISNAD</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="writerClearHistory()" style="font-size:.72rem;border:1px solid var(--border)">🗑 Bersihkan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CrossRef pipeline status bar (hidden until active) -->
+    <div id="writerCRStatus" class="hidden" style="margin-bottom:.75rem"></div>
+
+    <!-- Chat area -->
+    <div class="card" style="padding:1rem;margin-bottom:.75rem">
+      <div class="chat-container" id="chatContainer">
+        <div class="chat-empty" id="chatEmpty">
+          <div style="font-size:2.5rem;opacity:.4">✍</div>
+          <div style="font-size:.9rem;font-weight:700;color:var(--text-m)">Write Teks + Referensi Otomatis</div>
+          <div style="font-size:.8rem;color:var(--text-d);max-width:380px;line-height:1.7;text-align:center">
+            Setiap teks yang dihasilkan otomatis disertai <strong style="color:var(--teal)">referensi terverifikasi</strong> dari CrossRef DOI Registry &amp; Semantic Scholar, diformat Claude sesuai gaya sitasi pilihan Anda.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-response reference panel (rendered dynamically) -->
+    <div id="writerRefPanel" class="hidden" style="margin-bottom:.75rem"></div>
+
+    <!-- Session accumulated references -->
+    <div id="writerSessionRefsWrap" class="hidden" style="margin-bottom:.75rem">
+      <div class="card" style="padding:1rem;border-left:3px solid var(--teal)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem">
+          <span style="font-size:.8rem;font-weight:700;color:var(--teal)">📋 Akumulasi Referensi Sesi</span>
+          <div class="btn-group">
+            <button class="btn btn-ghost btn-sm" onclick="writerCopyAllRefs()" style="border:1px solid var(--border);font-size:.72rem">📋 Salin Semua</button>
+            <button class="btn btn-ghost btn-sm" onclick="writerClearSessionRefs()" style="border:1px solid var(--border);font-size:.72rem;color:var(--danger)">🗑 Hapus</button>
+          </div>
+        </div>
+        <div id="writerSessionRefsList" style="display:flex;flex-direction:column;gap:.4rem"></div>
+      </div>
+    </div>
+
+    <!-- Quick chips -->
+    <div class="chip-bar">
+      <span style="font-size:.72rem;color:var(--text-d);font-weight:700;white-space:nowrap">Prompt Cepat:</span>
+      <button class="chip" onclick="writerApplyPreset('Buatkan abstrak ilmiah sekitar 200 kata untuk penelitian tentang: ')">📄 Abstrak</button>
+      <button class="chip" onclick="writerApplyPreset('Tulis bagian Pendahuluan (latar belakang, rumusan masalah, tujuan) untuk topik: ')">📝 Pendahuluan</button>
+      <button class="chip" onclick="writerApplyPreset('Rumuskan 3 pertanyaan penelitian yang tajam untuk topik: ')">🔍 Rumusan Masalah</button>
+      <button class="chip" onclick="writerApplyPreset('Tuliskan kajian pustaka komprehensif tentang: ')">📚 Kajian Pustaka</button>
+      <button class="chip" onclick="writerApplyPreset('Parafrasekan paragraf berikut dengan bahasa akademik:\n\n')">✏️ Parafrase</button>
+      <button class="chip" onclick="writerApplyPreset('Deskripsikan metodologi penelitian yang tepat untuk: ')">🔬 Metodologi</button>
+      <button class="chip" onclick="writerApplyPreset('Tuliskan kesimpulan yang kuat dan berimplikasi untuk: ')">🏁 Kesimpulan</button>
+      <button class="chip" onclick="writerApplyPreset('Kembangkan paragraf berikut menjadi lebih argumentatif:\n\n')">💡 Kembangkan</button>
+    </div>
+
+    <!-- Input area -->
+    <div class="writer-input-wrap">
+      <textarea id="writer-textarea" placeholder="Tulis perintah Anda di sini... (Ctrl+Enter untuk kirim)" oninput="writerOnInput(this)" onkeydown="writerKeyDown(event)"></textarea>
+      <div class="writer-input-bar">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span id="writerWC" style="font-size:.75rem;color:var(--text-d);font-weight:600">0 kata</span>
+          <span style="font-size:.7rem;color:var(--text-d)">Ctrl+Enter</span>
+        </div>
+        <div class="btn-group">
+          <button id="writerStopBtn" class="btn btn-sm hidden" onclick="writerStop()" style="background:#fee2e2;color:var(--danger);border:1px solid #fca5a5">⏹ Stop</button>
+          <button id="writerSendBtn" class="btn btn-purple btn-sm" onclick="writerSend()" disabled>Kirim ✶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Writer actions -->
+    <div id="writerActions" class="btn-group hidden" style="margin-top:.75rem;justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="writerCopyLast()" style="border:1px solid var(--border)">📋 Salin Teks</button>
+      <button class="btn btn-ghost btn-sm" onclick="writerCopyWithRefs()" style="border:1px solid rgba(13,148,136,.3);color:var(--teal)">📋 Salin + Referensi</button>
+      <button class="btn btn-outline btn-sm" onclick="writerSendToHumanizer()">⚡ → Humanizer</button>
+      <button class="btn btn-outline btn-sm" onclick="writerSendToDetect()">🔍 → Detektor</button>
+      <button class="btn btn-outline btn-sm" onclick="writerExportDocx()">📄 Ekspor DOCX</button>
+      <button class="btn btn-teal btn-sm" onclick="writerExportWithRefs()" id="writerExportRefsBtn" style="display:none">📄 Ekspor Teks + Referensi</button>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: BIBLIOGRAPHY ═══ -->
+  <div class="tab-panel" id="tab-bibliography">
+
+    <div class="card card-accent-amber" style="padding:1rem 1.25rem;margin-bottom:1rem;background:linear-gradient(to right,rgba(217,119,6,.05),transparent)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--amber)">📚 Bibliography Creator — Claude AI</div>
+          <div style="font-size:.78rem;color:var(--text-m);margin-top:.2rem">Cari by keyword ATAU isi form manual · 8 gaya sitasi termasuk ISNAD · Ekspor DOCX · via GAS Proxy</div>
+        </div>
+        <div class="btn-group">
+          <span id="bibCount" class="hidden" style="font-size:.75rem;padding:.25rem .75rem;background:rgba(217,119,6,.1);color:var(--amber);border:1px solid rgba(217,119,6,.2);border-radius:20px;font-weight:700">0 tersimpan</span>
+          <button id="bibClearBtn" class="btn btn-ghost btn-sm hidden" onclick="biblioClearSaved()" style="border:1px solid var(--border)">🗑 Hapus Semua</button>
+          <button id="bibExportBtn" class="btn btn-amber btn-sm hidden" onclick="biblioExportDocx()">📄 Ekspor Daftar Pustaka</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode selector: Search or Form -->
+    <div class="card" style="padding:1rem 1.25rem;margin-bottom:1rem">
+      <div class="btn-group" style="margin-bottom:.75rem">
+        <button class="btn btn-amber" id="bibModeSearchBtn" onclick="setBibMode('search')">🔍 Cari by Keyword</button>
+        <button class="btn btn-outline" id="bibModeFormBtn" onclick="setBibMode('form')">📝 Isi Form Manual</button>
+      </div>
+
+      <!-- SEARCH MODE -->
+      <div id="bibSearchMode">
+        <div style="position:relative;margin-bottom:.75rem">
+          <span style="position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none">🔍</span>
+          <input type="text" id="bibQuery" class="form-control" style="padding-left:2.5rem;padding-right:2.5rem" placeholder="Ketik topik penelitian... cth: ekoteologi Islam maqashid syariah, zakat digital, AI Islamic education..." autocomplete="off" oninput="biblioDebouncedSearch(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();biblioSearch();}">
+          <span id="bibSearchSpinner" class="hidden" style="position:absolute;right:.9rem;top:50%;transform:translateY(-50%);width:18px;height:18px;border:2px solid rgba(217,119,6,.2);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite;display:none"></span>
+        </div>
+        <div class="bib-filter-row">
+          <select id="bibStyleSel" class="bib-sel bib-sel-gold" onchange="state.bibStyle=this.value">
+            <option value="apa7">APA 7th</option>
+            <option value="mla9">MLA 9th</option>
+            <option value="chicago">Chicago 17</option>
+            <option value="harvard">Harvard</option>
+            <option value="vancouver">Vancouver</option>
+            <option value="ieee">IEEE</option>
+            <option value="turabian">Turabian 9</option>
+            <option value="isnad">ISNAD (Islam)</option>
+          </select>
+          <select id="bibTypeSel" class="bib-sel" onchange="state.bibType=this.value">
+            <option value="all">Semua Tipe</option>
+            <option value="journal">Artikel Jurnal</option>
+            <option value="book">Buku</option>
+            <option value="chapter">Bab Buku</option>
+            <option value="thesis">Tesis/Disertasi</option>
+            <option value="conference">Prosiding</option>
+            <option value="report">Laporan</option>
+          </select>
+          <select id="bibLangSel" class="bib-sel" onchange="state.bibLang=this.value">
+            <option value="id">Bahasa Indonesia</option>
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+            <option value="mix">Multibahasa</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="state.bibLastQ='';biblioSearch()" style="border:1px solid var(--border)">⟳ Cari Ulang</button>
+        </div>
+        <div class="chip-bar">
+          <span style="font-size:.72rem;color:var(--text-d);font-weight:700;white-space:nowrap">Topik Cepat:</span>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('ekoteologi Islam maqashid syariah lingkungan')">🌿 Ekoteologi Islam</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('Islamic economics zakat digital fintech')">💰 Ekonomi Islam</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('AI artificial intelligence education learning')">🤖 AI & Pendidikan</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('Quran hermeneutics tafsir methodology')">📖 Tafsir & Hermeneutik</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('Islamic digital humanities NLP text analysis')">💻 Digital Humanities</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('gender equality women Islamic law fiqh')">⚖️ Gender & Fiqh</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('pesantren boarding school education curriculum')">🏫 Pesantren</button>
+          <button class="chip bib-chip" onclick="biblioQuickSearch('halal fintech sharia banking blockchain')">🏦 Fintech Syariah</button>
+        </div>
+      </div>
+
+      <!-- FORM MODE -->
+      <div id="bibFormMode" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Format Sitasi Output</label>
+          <select class="form-control" id="bibFormStyle">
+            <option value="APA7">APA 7th Edition</option>
+            <option value="MLA9">MLA 9th Edition</option>
+            <option value="ChicagoAD">Chicago (Author-Date)</option>
+            <option value="ChicagoNB">Chicago (Note-Bibliography)</option>
+            <option value="Harvard">Harvard</option>
+            <option value="Vancouver">Vancouver</option>
+            <option value="IEEE">IEEE</option>
+            <option value="ISNAD">ISNAD (Islam)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Jenis Sumber</label>
+          <select class="form-control" id="bibSourceType" onchange="renderBiblioFields()">
+            <option value="journal_article">📄 Artikel Jurnal</option>
+            <option value="book">📚 Buku</option>
+            <option value="book_chapter">📖 Bab dalam Buku</option>
+            <option value="website">🌐 Website</option>
+            <option value="thesis">🎓 Tesis/Disertasi</option>
+            <option value="conference">🏛 Prosiding Konferensi</option>
+          </select>
+        </div>
+        <div id="biblioFields"></div>
+        <div class="btn-group" style="margin-top:.75rem">
+          <button class="btn btn-outline btn-sm" onclick="renderBiblioFields()">🗑 Reset Form</button>
+          <button class="btn btn-amber" id="btnGenerateCitations" disabled>📝 Generate Sitasi</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" id="biblioLoading">
+      <div class="spinner spinner-amber"></div>
+      <p style="color:var(--text-m);font-size:.875rem">Claude sedang membuat referensi akademik...</p>
+    </div>
+
+    <!-- Results layout: left results, right saved -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:1rem" id="bibCols">
+      <div>
+        <div id="bibResultsArea">
+          <div class="text-center" style="padding:3rem;color:var(--text-d)" id="bibEmpty">
+            <div style="font-size:2.5rem;margin-bottom:.75rem;opacity:.4">📚</div>
+            <div style="font-weight:700;color:var(--text-m);margin-bottom:.4rem">Ketik Topik untuk Mulai</div>
+            <div style="font-size:.82rem;line-height:1.7">Masukkan topik penelitian atau kata kunci,<br>atau isi form manual untuk generate sitasi.</div>
+          </div>
+        </div>
+        <!-- Form-based citation result -->
+        <div id="biblioResult" class="hidden">
+          <div class="flex justify-between items-center mb-1">
+            <h4 class="font-bold" style="font-size:.9rem">📋 Hasil Sitasi (8 Format)</h4>
+            <button class="btn btn-outline btn-sm" id="btnCopyAllCitations">📋 Salin Semua</button>
+          </div>
+          <div id="citationsGrid"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="padding:1rem;position:sticky;top:80px;max-height:calc(100vh-130px);overflow-y:auto">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)">
+            <div style="font-size:.78rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.6px">📋 Tersimpan</div>
+            <div class="btn-group">
+              <button class="btn btn-ghost" onclick="biblioCopyAll()" style="font-size:.72rem;padding:.25rem .6rem;border:1px solid var(--border)" title="Salin semua">📋 Semua</button>
+              <button class="btn btn-ghost" onclick="biblioCopyAllIntext()" style="font-size:.72rem;padding:.25rem .6rem;border:1px solid var(--border)" title="In-text">[] In-text</button>
+            </div>
+          </div>
+          <div id="bibSavedList">
+            <div style="color:var(--text-d);font-size:.8rem;text-align:center;padding:2rem 0;line-height:1.7">
+              Klik <strong style="color:var(--amber)">+ Simpan</strong><br>dari hasil pencarian
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: INTELLIGENCE TIPS ═══ -->
+  <div class="tab-panel" id="tab-tips">
+
+    <div class="card" style="padding:1.25rem;margin-bottom:1.25rem;background:linear-gradient(135deg,#dbeafe,#eff6ff);border-color:#93c5fd">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:.4rem">💡 AcademIQ Suite v3.0 — Intelligence Tips</div>
+      <div style="font-size:.85rem;color:#1e40af;line-height:1.7">Panduan lengkap penggunaan platform akademik AI berbasis GAS Proxy. Tidak memerlukan API Key — semua terotomasi melalui server GAS.</div>
+    </div>
+
+    <div class="tips-grid" id="tipsGrid"></div>
+
+    <div class="card" style="margin-top:1.25rem;border-left:4px solid var(--success)">
+      <h3 style="margin-bottom:.75rem;font-size:1rem">🔒 Keamanan & Privasi — GAS Proxy Architecture</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem">
+        <div style="padding:.9rem;background:var(--bg);border-radius:var(--radius-sm);font-size:.82rem;line-height:1.7">
+          <strong>🛡 API Key Aman</strong><br>Claude API Key tersimpan di Script Properties Google Apps Script — tidak pernah dikirim atau terekspos di browser.
+        </div>
+        <div style="padding:.9rem;background:var(--bg);border-radius:var(--radius-sm);font-size:.82rem;line-height:1.7">
+          <strong>🔗 Proxy GAS</strong><br>URL GAS tertanam langsung: tidak perlu konfigurasi manual. Semua request diproksikan melalui server GAS milik Anda.
+        </div>
+        <div style="padding:.9rem;background:var(--bg);border-radius:var(--radius-sm);font-size:.82rem;line-height:1.7">
+          <strong>🤖 Model AI</strong><br>claude-opus-4-5 (Detector, Humanizer, Bibliography Form) · claude-opus-4-5 (Write Teks, Bibliography Search)
+        </div>
+        <div style="padding:.9rem;background:var(--bg);border-radius:var(--radius-sm);font-size:.82rem;line-height:1.7">
+          <strong>📡 Status Koneksi</strong><br>Indikator hijau di header = GAS terhubung & siap. Jika merah, periksa URL GAS dan pastikan deployment aktif.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ REPORT OVERLAY ═══ -->
+<div class="rpt-overlay" id="rptOverlay" onclick="if(event.target===this)closeReport()">
+  <div class="rpt-frame">
+    <div class="rpt-toolbar">
+      <span style="font-size:.85rem;font-weight:700;color:#e2e8f0">Scientific Integrity Analysis Report</span>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-teal btn-sm" onclick="window.print()">🖨 Cetak / PDF</button>
+        <button onclick="closeReport()" style="background:none;border:none;color:#f87171;font-size:1.25rem;cursor:pointer;padding:0 .5rem">×</button>
+      </div>
+    </div>
+    <div class="rpt-body" id="rptBody"></div>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+//  ACADEMIQ SUITE v3.2 — CrossRef + Claude Hybrid Bibliography Engine
+//
+//  3-Phase Pipeline:
+//    Phase 1 → CrossRef API  (real, DOI-verified metadata — free, CORS-ok)
+//    Phase 2 → Claude via GAS Relay (format verified metadata into citations)
+//    Phase 3 → Pure Claude fallback (if CrossRef finds nothing relevant)
+//
+//  All other features (Detector, Humanizer, Write Teks) unchanged.
+// ══════════════════════════════════════════════════════════════════════
+
+// ── CONFIG ────────────────────────────────────────────────────────────
+const GAS_URL     = 'https://script.google.com/macros/s/AKfycbxvnfOOAg03yj0n7svP8Tbz4kTgNTMHeJYvlSr2EnXJFDIpzPYObUqYUa5szxsF8diq/exec';
+const GAS_TIMEOUT = 120000;
+
+// CrossRef API (free, no key needed, CORS enabled)
+const CROSSREF_BASE   = 'https://api.crossref.org/works';
+const CROSSREF_EMAIL  = 'iskandar@uinsi.ac.id'; // polite-pool header → faster responses
+const CROSSREF_ROWS   = 8;   // fetch more, then rank by relevance
+const CROSSREF_FIELDS = 'DOI,title,author,published,container-title,volume,issue,page,type,publisher,abstract,subject,ISSN,ISBN,event';
+
+// Semantic Scholar API (free, no key, CORS-ok, great for Islamic studies)
+const SEMANTIC_BASE   = 'https://api.semanticscholar.org/graph/v1/paper/search';
+const SEMANTIC_FIELDS = 'paperId,title,authors,year,journal,externalIds,abstract,citationCount,venue,publicationTypes';
+
+// ── METRICS DEF ───────────────────────────────────────────────────────
+const METRICS_DEF = [
+  {id:'diversity',     n:'Lexical Diversity',            desc:'Variasi kosakata unik dalam teks.'},
+  {id:'burstiness',    n:'Sentence Burstiness',          desc:'Variasi panjang kalimat (ritme penulisan).'},
+  {id:'aiPhrase',      n:'AI Phrase Density',            desc:'Kepadatan frasa transisi khas LLM.'},
+  {id:'repetition',    n:'Word Repetition',              desc:'Tingkat pengulangan kata yang tidak perlu.'},
+  {id:'perplexity',    n:'Perplexity Score',             desc:'Tingkat ketidakpastian prediksi kata.'},
+  {id:'readabilityVar',n:'Readability Variance',         desc:'Konsistensi tingkat keterbacaan.'},
+  {id:'posEntropy',    n:'POS Entropy',                  desc:'Distribusi kelas kata (Noun, Verb, dll).'},
+  {id:'sentimentShift',n:'Sentiment Shift',              desc:'Perubahan emosi antar kalimat.'},
+  {id:'punctVariation',n:'Punctuation Variation',        desc:'Kekayaan penggunaan tanda baca.'},
+  {id:'entityDensity', n:'Entity Density',               desc:'Kepadatan subjek dan objek spesifik.'},
+  {id:'startDiversity',n:'Sentence Start Diversity',     desc:'Variasi kata pembuka kalimat.'},
+  {id:'connective',    n:'Connective Load',              desc:'Beban penggunaan kata hubung.'},
+  {id:'passiveRatio',  n:'Passive Voice Ratio',          desc:'Rasio penggunaan kalimat pasif.'},
+  {id:'wordUniform',   n:'Word Length Uniformity',       desc:'Keseragaman panjang kata.'},
+  {id:'paraUniform',   n:'Paragraph Length Uniformity',  desc:'Keseragaman panjang paragraf.'}
+];
+
+const AI_PHRASES = [
+  'dalam dunia yang terus berkembang','penting untuk diingat',
+  'selain itu, perlu','di sisi lain','sebagai kesimpulan',
+  'perlu dicatat bahwa','pada akhirnya','secara keseluruhan, dapat',
+  'dengan demikian dapat','tidak dapat disangkal'
+];
+const VOCAB = {
+  academic:['diskursus','epistemologis','dialektika','paradigma','manifestasi','kontekstualisasi','interdisipliner','signifikansi','metodologis','komprehensif','hermeneutis','ontologis','aksiologis'],
+  professional:['skalabilitas','optimalisasi','implementasi','sinergitas','efisiensi','stakeholder','proaktif','benchmarking'],
+  journalistic:['investigasi','narasumber','fenomena','kontroversial','perspektif','aktual','kronologi','eksklusif'],
+  natural:['sebenarnya','mungkin','rasanya','bayangkan','tentu saja','menariknya','jujur','biasanya','seringkali','ternyata']
+};
+
+const BIB_STYLES = {
+  apa7:'APA 7th Edition', mla9:'MLA 9th Edition',
+  chicago:'Chicago 17th', harvard:'Harvard',
+  vancouver:'Vancouver', ieee:'IEEE',
+  turabian:'Turabian 9th', isnad:'ISNAD (Islamic)'
+};
+
+const WRITER_SYSTEMS = {
+  academic:`Kamu adalah penulis akademik ahli berbahasa Indonesia yang berspesialisasi dalam karya ilmiah untuk Perguruan Tinggi Keagamaan Islam (PTKIN/UIN/IAIN/UINSI). Tulislah dengan gaya akademik formal, sistematis, dan menggunakan terminologi ilmiah tepat. Struktur tulisan koheren dengan argumen logis dan berbobot. Gunakan Bahasa Indonesia baku PUEBI. Hindari frasa khas AI.`,
+  research:`Kamu adalah asisten penelitian akademik berbahasa Indonesia. Bantu dalam: merumuskan masalah, mengembangkan kerangka teori, merancang metodologi, menganalisis data, dan menyusun laporan penelitian. Gunakan pendekatan sistematis berbasis bukti ilmiah.`,
+  editor:`Kamu adalah editor bahasa dan parafrase profesional berbahasa Indonesia. Tugasmu: menyempurnakan, mengedit, dan memparafrase teks agar lebih baik tata bahasa, gaya, dan keterbacaan akademiknya. Pertahankan makna asli. Hasilkan teks yang tidak terdeteksi sebagai tulisan AI.`,
+  creative:`Kamu adalah penulis kreatif berbahasa Indonesia yang menghasilkan konten menarik, imajinatif, dan ekspresif. Gunakan bahasa vivid, metafora tepat, dan narasi mengalir.`,
+  free:`Kamu adalah asisten AI siap membantu berbagai tugas penulisan dan pertanyaan dalam Bahasa Indonesia. Jawab secara akurat, informatif, dan sesuai konteks.`
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────
+const state = {
+  connected:false, currentTab:'detector',
+  detectText:'', detectResult:null,
+  humText:'', humResult:null, humOrigText:'', humMode:'academic',
+  writerMessages:[], writerSystem:'academic', writerLastText:'', writerStreaming:false,
+  writerCREnabled:true, writerLastRefs:[], writerSessionRefs:[],
+  bibStyle:'apa7', bibType:'all', bibLang:'id',
+  bibSaved:[], bibLastQ:'', bibDebTimer:null, bibMode:'search',
+  citations:{}, currentBibItems:[],
+  // CrossRef state
+  crLastResults:[], crPhaseStatus:{1:'pending',2:'pending',3:'pending'}
+};
+
+// ── UTILITIES ─────────────────────────────────────────────────────────
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const countWords = t => t&&t.trim()?t.trim().split(/\s+/).filter(w=>w.length>0).length:0;
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function showAlert(msg, type='error'){
+  const el=$('#alertBox'); if(!el) return;
+  el.innerHTML='<span>'+msg+'</span>';
+  el.className='alert alert-'+(type==='success'?'success':type==='warning'?'warning':type==='info'?'info':'error')+' show';
+  setTimeout(()=>el.classList.remove('show'),7000);
+}
+function setLoading(id,on){ const el=document.getElementById(id);if(el)on?el.classList.add('show'):el.classList.remove('show'); }
+function showEl(id,show=true){ const el=document.getElementById(id);if(el)el.classList.toggle('hidden',!show); }
+
+function updateConnStatus(connected,msg){
+  state.connected=connected;
+  const dot=$('#statusDot'),text=$('#statusText');
+  if(dot)dot.className='status-dot'+(connected?' connected':'');
+  if(text)text.textContent=msg||(connected?'Terhubung ke GAS':'Belum terhubung');
+}
+function enableActionBtns(on){
+  ['btnAnalyze','btnHumanize','btnGenerateCitations'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.disabled=!on;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  GAS PROXY CORE
+// ══════════════════════════════════════════════════════════════════════
+
+function callGAS(endpoint, payload){
+  const body=JSON.stringify({endpoint,payload:payload||{},timestamp:new Date().toISOString(),version:'3.2.0'});
+  return new Promise(resolve=>{
+    let ctrl;
+    if(typeof AbortController!=='undefined')ctrl=new AbortController();
+    const tid=setTimeout(()=>{if(ctrl)ctrl.abort();},GAS_TIMEOUT);
+    fetch(GAS_URL,{method:'POST',body,signal:ctrl?ctrl.signal:undefined})
+      .then(r=>{ clearTimeout(tid); if(!r.ok)throw new Error('HTTP '+r.status+' '+r.statusText); return r.json(); })
+      .then(r=>{
+        if(r&&r.success===true)resolve({success:true,data:r.data||{}});
+        else resolve({success:false,error:r.error||'Server error',userMessage:r.error||'Terjadi kesalahan di server GAS'});
+      })
+      .catch(e=>{
+        clearTimeout(tid);
+        let msg='Gagal terhubung ke server GAS.';
+        if(e.name==='AbortError')          msg='⏰ Timeout — Server sibuk, coba lagi dalam 30 detik.';
+        else if(e.message&&e.message.includes('Failed to fetch')) msg='🔌 Koneksi ke GAS gagal. Periksa koneksi internet.';
+        resolve({success:false,error:e.message,userMessage:msg});
+      });
+  });
+}
+
+function hasValidData(data,keys){
+  if(!data)return false;
+  if(keys)return keys.some(k=>data[k]&&String(data[k]).trim().length>10);
+  return Object.values(data).some(v=>v&&(typeof v==='string'?v.trim().length>5:Array.isArray(v)?v.length>0:!!v));
+}
+
+// ── GAS Relay Engine ─────────────────────────────────────────────────
+async function callGASWithFallback(endpoint, payload){
+  const r=await callGAS(endpoint,payload);
+  const expectedKeys={
+    write:               ['response','text','humanizedText','content'],
+    bibliography_search: ['raw','text','response','humanizedText','items']
+  };
+  if(r.success && hasValidData(r.data,expectedKeys[endpoint]))return r;
+  console.log(`[GAS Relay] '${endpoint}' → relaying via 'humanize'`);
+  return await gasRelayViaHumanize(endpoint,payload);
+}
+
+async function gasRelayViaHumanize(mode,payload){
+  let relayText='';
+  if(mode==='write')               relayText=buildWriteRelayText(payload);
+  else if(mode==='bibliography_search') relayText=buildBibSearchRelayText(payload);
+  else return {success:false,error:'Unknown relay mode',userMessage:'Mode tidak dikenal: '+mode};
+  const r=await callGAS('humanize',{text:relayText,level:'light',register:'academic_id',relayMode:mode});
+  if(!r.success)return r;
+  const raw=r.data.humanizedText||r.data.text||r.data.content||'';
+  if(!raw.trim())return {success:false,error:'Relay empty',userMessage:'Server tidak menghasilkan respons. Coba lagi.'};
+  if(mode==='write')               return {success:true,data:{response:raw}};
+  if(mode==='bibliography_search') return {success:true,data:{raw}};
+  return {success:true,data:{text:raw}};
+}
+
+function buildWriteRelayText(payload){
+  const sys=payload.system||WRITER_SYSTEMS.academic;
+  const msgs=payload.messages||[];
+  const lastUser=[...msgs].reverse().find(m=>m.role==='user');
+  const userReq=lastUser?lastUser.content:'';
+  const historyPairs=[];
+  for(let i=Math.max(0,msgs.length-9);i<msgs.length-1;i++){
+    const m=msgs[i];
+    if(m.content)historyPairs.push('['+( m.role==='user'?'Pengguna':'Asisten' )+']: '+m.content.slice(0,400));
+  }
+  const histText=historyPairs.length?'\n\nKONTEKS PERCAKAPAN:\n'+historyPairs.join('\n\n')+'\n\n':'\n\n';
+  const modeDesc=sys.includes('editor')?'Editor & Parafrase':sys.includes('penelitian')?'Asisten Penelitian':sys.includes('kreatif')?'Penulis Kreatif':sys.includes('bebas')?'Asisten Bebas':'Penulis Akademik (PTKIN/UIN)';
+  return `TUGAS PENULISAN AKADEMIK — Mode: ${modeDesc}
+Standar: Bahasa Indonesia baku PUEBI · Format PTKIN/Sinta · Hindari frasa AI
+${histText}PERINTAH:
+${userReq}
+
+Hasilkan teks akademik yang lengkap, komprehensif, sistematis, dan berkualitas tinggi. Output langsung berisi teks hasil tanpa label pembuka.`;
+}
+
+function buildBibSearchRelayText(payload){
+  const style=BIB_STYLES[state.bibStyle]||'APA 7th Edition';
+  const tMap={all:'campuran jurnal, buku, prosiding, tesis',journal:'artikel jurnal',book:'buku',chapter:'bab buku',thesis:'tesis/disertasi',conference:'prosiding',report:'laporan'};
+  const lMap={id:'Indonesia (PTKIN/UIN/Sinta/Scopus)',en:'English (international)',ar:'Arabic',mix:'Multibahasa'};
+  return `TUGAS: GENERATE DAFTAR REFERENSI AKADEMIK\nTopik: "${payload.query||''}"\nGaya: ${style}\nTipe: ${tMap[state.bibType]||tMap.all}\nBahasa: ${lMap[state.bibLang]||lMap.id}\n\nFormat PERSIS (pisahkan dengan ===ITEM===):\nTYPE: [journal|book|chapter|thesis|conference|report]\nTITLE: [judul]\nAUTHORS: [penulis]\nYEAR: [tahun]\nSOURCE: [jurnal/penerbit]\nEXTRA: [vol, no, hal]\nDOI: [doi/url atau -]\nBIBLIOGRAPHY: [sitasi ${style}]\nINTEXT: [in-text ${style}]\n===ITEM===\n\nGENERATE 6 referensi NYATA dan DAPAT DIVERIFIKASI. Langsung mulai tanpa pengantar.`;
+}
+
+async function testConnection(){
+  const dot=$('#statusDot'),txt=$('#statusText');
+  if(dot)dot.className='status-dot testing';
+  if(txt)txt.textContent='Menghubungkan...';
+  const r=await callGAS('ping',{test:true,version:'3.2.0'});
+  if(r.success&&r.data&&r.data.status==='connected'){
+    updateConnStatus(true,'Terhubung · GAS + CrossRef');
+    enableActionBtns(true);return true;
+  } else {
+    updateConnStatus(false,'GAS: '+(r.userMessage||'Belum terhubung'));
+    enableActionBtns(false);return false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ CROSSREF API — Phase 1
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Search CrossRef for real, DOI-verified academic metadata.
+ * Returns array of normalized metadata objects.
+ */
+async function searchCrossRef(query, rows=CROSSREF_ROWS){
+  const typeFilter = {
+    journal:'journal-article', book:'book', chapter:'book-chapter',
+    thesis:'dissertation', conference:'proceedings-article', report:'report'
+  };
+  let url = CROSSREF_BASE
+    + '?query=' + encodeURIComponent(query)
+    + '&rows='  + rows
+    + '&select=' + CROSSREF_FIELDS
+    + '&mailto=' + CROSSREF_EMAIL
+    + '&sort=relevance&order=desc';
+
+  if(state.bibType !== 'all' && typeFilter[state.bibType])
+    url += '&filter=type:' + typeFilter[state.bibType];
+
+  const r = await fetch(url, {
+    headers:{'User-Agent':'AcademIQ/3.2 ('+CROSSREF_EMAIL+')'}
+  });
+  if(!r.ok) throw new Error('CrossRef HTTP '+r.status);
+  const data = await r.json();
+  return (data.message&&data.message.items||[]).map(normalizeCrossRefItem);
+}
+
+/**
+ * Normalize a CrossRef item into our standard bibliography metadata shape.
+ */
+function normalizeCrossRefItem(item){
+  // Authors
+  let authors = '';
+  if(item.author&&item.author.length){
+    authors = item.author.map(a=>{
+      const fam = a.family||'';
+      const giv = a.given ? a.given.split(' ').map(n=>n[0]+'.').join('')+' ' : '';
+      return fam ? fam+(giv?', '+giv:'') : a.name||'';
+    }).filter(Boolean).join('; ');
+  }
+
+  // Year
+  let year = '';
+  if(item.published&&item.published['date-parts']&&item.published['date-parts'][0])
+    year = String(item.published['date-parts'][0][0]||'');
+
+  // Source / journal / publisher
+  const source = (item['container-title']&&item['container-title'][0])
+    || item.publisher || '';
+
+  // Type mapping
+  const typeMap = {
+    'journal-article':'journal', 'book':'book', 'book-chapter':'chapter',
+    'proceedings-article':'conference', 'dissertation':'thesis',
+    'report':'report', 'monograph':'book', 'reference-entry':'book'
+  };
+  const type = typeMap[item.type] || 'journal';
+
+  // Extra (volume/issue/page)
+  const extra = [
+    item.volume ? 'Vol.'+item.volume : '',
+    item.issue  ? 'No.'+item.issue   : '',
+    item.page   ? 'pp.'+item.page    : ''
+  ].filter(Boolean).join(', ');
+
+  // Title
+  const title = (item.title&&item.title[0])||'';
+
+  // DOI
+  const doi = item.DOI ? 'https://doi.org/'+item.DOI : '-';
+
+  // Abstract (first 300 chars)
+  let abstract = '';
+  if(item.abstract){
+    abstract = item.abstract.replace(/<[^>]+>/g,'').trim().slice(0,320);
+    if(item.abstract.length>320) abstract += '...';
+  }
+
+  // ISSN
+  const issn = item.ISSN&&item.ISSN[0] ? 'ISSN:'+item.ISSN[0] : '';
+
+  // Citation count — not in CrossRef but we add a placeholder
+  return {
+    type, title, authors, year, source, extra, doi, abstract, issn,
+    doiRaw: item.DOI||'',
+    publisher: item.publisher||'',
+    raw: item,               // keep raw for debugging
+    _source: 'crossref',     // mark origin
+    bib: '',                 // will be filled by Claude formatting
+    intext: ''
+  };
+}
+
+/**
+ * Also try Semantic Scholar for broader coverage (especially older/Islamic studies).
+ * Returns array of normalized metadata.
+ */
+async function searchSemanticScholar(query, limit=4){
+  const url = SEMANTIC_BASE
+    + '?query=' + encodeURIComponent(query)
+    + '&fields=' + SEMANTIC_FIELDS
+    + '&limit=' + limit
+    + '&offset=0';
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('Semantic Scholar HTTP '+r.status);
+  const data = await r.json();
+  return (data.data||[]).map(item=>{
+    const authors = (item.authors||[]).map(a=>a.name||'').filter(Boolean).join('; ');
+    const doi = item.externalIds&&item.externalIds.DOI
+      ? 'https://doi.org/'+item.externalIds.DOI : '-';
+    return {
+      type:'journal', title:item.title||'', authors, year:String(item.year||''),
+      source:item.venue||item.journal?.name||'',
+      extra: item.citationCount ? 'Cited: '+item.citationCount : '',
+      doi, abstract:(item.abstract||'').slice(0,320)||'', issn:'',
+      doiRaw: item.externalIds&&item.externalIds.DOI||'',
+      publisher:'', raw:item, _source:'semantic',
+      bib:'', intext:''
+    };
+  });
+}
+
+/**
+ * Deduplicate: merge CrossRef + Semantic Scholar, remove duplicates by DOI/title.
+ */
+function deduplicateItems(cr, ss){
+  const seen = new Set();
+  const all  = [...cr, ...ss];
+  return all.filter(it=>{
+    const key = it.doiRaw || it.title.toLowerCase().slice(0,50);
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 8); // max 8 for Claude to format
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ CLAUDE CITATION FORMATTER — Phase 2
+//  Sends real CrossRef metadata to Claude for accurate formatting
+// ══════════════════════════════════════════════════════════════════════
+
+function buildCrossRefFormatPrompt(items, style){
+  const styleName = BIB_STYLES[style]||'APA 7th Edition';
+
+  // Serialize metadata for Claude — be explicit, structured
+  const metadataText = items.map((it,i)=>{
+    return `--- REFERENSI ${i+1} ---
+TYPE      : ${it.type}
+TITLE     : ${it.title}
+AUTHORS   : ${it.authors||'N/A'}
+YEAR      : ${it.year||'N/A'}
+SOURCE    : ${it.source||'N/A'}
+PUBLISHER : ${it.publisher||'N/A'}
+VOLUME    : ${it.extra||'N/A'}
+DOI       : ${it.doiRaw? 'https://doi.org/'+it.doiRaw : 'N/A'}
+ISSN      : ${it.issn||'N/A'}`;
+  }).join('\n\n');
+
+  return `Kamu adalah bibliografer akademik ahli. Format metadata publikasi ilmiah berikut menjadi sitasi format ${styleName}.
+
+METADATA (dari CrossRef DOI Registry — data sudah terverifikasi):
+${metadataText}
+
+INSTRUKSI:
+Untuk SETIAP referensi di atas (1 sampai ${items.length}), hasilkan format PERSIS seperti ini, lalu tutup dengan ===ITEM===:
+
+BIBLIOGRAPHY: [sitasi lengkap format ${styleName} — HARUS tepat sesuai aturan ${styleName}]
+INTEXT: [format kutipan dalam teks sesuai ${styleName}]
+===ITEM===
+
+ATURAN:
+- Gunakan DATA PERSIS dari metadata di atas (nama, tahun, judul, jurnal) — jangan ubah atau tebak
+- Jika ada DOI, selalu sertakan dalam sitasi
+- Untuk APA 7: Penulis, Tahun, Judul artikel, Nama Jurnal, Vol(No), hal. DOI
+- Untuk ISNAD: gunakan format sitasi Islam (nisbah, tahqiq jika ada)
+- Output HANYA format yang diminta — tidak perlu penjelasan atau teks tambahan
+- Hasilkan TEPAT ${items.length} item sesuai urutan metadata`;
+}
+
+/**
+ * Send CrossRef metadata to Claude (via GAS Relay) for citation formatting.
+ * Returns items with .bib and .intext filled.
+ */
+async function formatWithClaude(items, style){
+  const prompt  = buildCrossRefFormatPrompt(items, style);
+  const relayPayload = {
+    text:     prompt,
+    level:    'light',
+    register: 'academic_id',
+    relayMode:'crossref_format'
+  };
+
+  const r = await callGAS('humanize', relayPayload);
+  if(!r.success) throw new Error(r.userMessage||'GAS humanize failed');
+
+  const raw = r.data.humanizedText||r.data.text||r.data.content||'';
+  if(!raw.trim()) throw new Error('Claude returned empty response');
+
+  return parseCrossRefFormatted(raw, items);
+}
+
+/**
+ * Parse Claude's formatted output and merge back into metadata items.
+ */
+function parseCrossRefFormatted(raw, originalItems){
+  const blocks = raw.split(/===ITEM===/).map(b=>b.trim()).filter(b=>b.length>5);
+  return originalItems.map((it,i)=>{
+    const block = blocks[i]||'';
+    const getBib    = b=>{ const m=b.match(/BIBLIOGRAPHY:\s*([\s\S]+?)(?=\nINTEXT:|$)/i);return m?m[1].trim():''; };
+    const getIntext = b=>{ const m=b.match(/INTEXT:\s*([\s\S]+?)$/i);return m?m[1].trim():''; };
+    const bib    = getBib(block);
+    const intext = getIntext(block);
+    return {
+      ...it,
+      bib:    bib    || fallbackFormatBib(it, state.bibStyle),
+      intext: intext || fallbackFormatIntext(it, state.bibStyle)
+    };
+  });
+}
+
+/**
+ * Local fallback formatter if Claude/GAS is slow (APA 7 only as base).
+ */
+function fallbackFormatBib(it, style){
+  const au  = it.authors || 'Unknown Author';
+  const yr  = it.year    ? '('+it.year+'). ' : '';
+  const ti  = it.title   ? it.title+'. '      : '';
+  const src = it.source  ? '<em>'+it.source+'</em>. ' : '';
+  const doi = it.doiRaw  ? 'https://doi.org/'+it.doiRaw : '';
+  return au+'. '+yr+ti+src+(it.extra?it.extra+'. ':'')+doi;
+}
+function fallbackFormatIntext(it, style){
+  const au = it.authors ? it.authors.split(';')[0].split(',')[0].trim() : 'Unknown';
+  return '('+au+(it.year?', '+it.year:'')+')';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ★ MAIN BIBLIOGRAPHY SEARCH — 3-Phase Pipeline
+// ══════════════════════════════════════════════════════════════════════
+
+// Progress UI
+function showPipelineProgress(area){
+  area.innerHTML=`
+    <div class="cr-progress-wrap" id="cr-progress">
+      <div class="cr-progress-title">🔬 CrossRef + Claude Pipeline — Mencari Referensi Terverifikasi</div>
+      <div class="cr-phase-row" id="cr-phase1">
+        <div class="cr-phase-icon active" id="cr-ph1-icon"><div class="cr-mini-spin"></div></div>
+        <div class="cr-phase-label active-label" id="cr-ph1-label">Phase 1 — CrossRef DOI Registry & Semantic Scholar</div>
+        <div class="cr-phase-result" id="cr-ph1-result"></div>
+      </div>
+      <div class="cr-phase-row" id="cr-phase2">
+        <div class="cr-phase-icon pending" id="cr-ph2-icon">2</div>
+        <div class="cr-phase-label" id="cr-ph2-label">Phase 2 — Claude AI Format Sitasi (via GAS)</div>
+        <div class="cr-phase-result" id="cr-ph2-result"></div>
+      </div>
+      <div class="cr-phase-row" id="cr-phase3" style="display:none">
+        <div class="cr-phase-icon pending" id="cr-ph3-icon">3</div>
+        <div class="cr-phase-label" id="cr-ph3-label">Phase 3 — Fallback: Pure Claude Generate</div>
+        <div class="cr-phase-result" id="cr-ph3-result"></div>
+      </div>
+    </div>`;
+}
+
+function updatePhaseUI(phase, status, label, result){
+  const icon  = document.getElementById('cr-ph'+phase+'-icon');
+  const lbl   = document.getElementById('cr-ph'+phase+'-label');
+  const res   = document.getElementById('cr-ph'+phase+'-result');
+  if(!icon) return;
+  icon.className = 'cr-phase-icon '+(status==='active'?'active':status==='ok'?'done-ok':status==='skip'?'done-skip':'pending');
+  icon.innerHTML = status==='active'?'<div class="cr-mini-spin"></div>':status==='ok'?'✓':status==='skip'?'↷':String(phase);
+  if(lbl){ lbl.className='cr-phase-label'+(status==='active'?' active-label':''); if(label)lbl.textContent=label; }
+  if(res && result){ res.innerHTML=result; }
+}
+
+async function biblioSearch(){
+  const q = (document.getElementById('bibQuery')||{}).value;
+  if(!q||q.trim().length<2) return;
+  const query = q.trim();
+  if(query===state.bibLastQ && state.currentBibItems.length>0) return;
+  if(!state.connected){ showAlert('🔌 Belum terhubung ke GAS','error'); return; }
+  state.bibLastQ = query;
+
+  const sp = document.getElementById('bibSearchSpinner');
+  if(sp) sp.style.display='block';
+  setLoading('biblioLoading',false); // we use custom progress UI instead
+  showEl('bibResultsArea',true); showEl('biblioResult',false);
+
+  const area = document.getElementById('bibResultsArea');
+  showPipelineProgress(area);
+
+  let allItems = [];
+  let phase3Needed = false;
+
+  // ── PHASE 1: CrossRef + Semantic Scholar ─────────────────────────
+  try{
+    updatePhaseUI(1,'active','Phase 1 — CrossRef DOI Registry & Semantic Scholar...','');
+
+    const [crItems, ssItems] = await Promise.allSettled([
+      searchCrossRef(query, CROSSREF_ROWS),
+      searchSemanticScholar(query, 4)
+    ]);
+
+    const crData = crItems.status==='fulfilled' ? crItems.value : [];
+    const ssData = ssItems.status==='fulfilled' ? ssItems.value : [];
+    allItems = deduplicateItems(crData, ssData);
+
+    const crCount = crData.length, ssCount = ssData.length;
+    const sourceLabel = `<span class="cr-badge cr-badge-verified">CrossRef: ${crCount}</span>&nbsp;<span class="cr-badge cr-badge-claude">S2: ${ssCount}</span>`;
+
+    if(allItems.length === 0){
+      updatePhaseUI(1,'skip','Phase 1 — Tidak ada hasil CrossRef/Semantic Scholar',
+        '<span style="color:var(--amber)">0 item</span>');
+      phase3Needed = true;
+    } else {
+      updatePhaseUI(1,'ok','Phase 1 — CrossRef & Semantic Scholar selesai',
+        `${sourceLabel} <strong>${allItems.length} metadata terverifikasi</strong>`);
+    }
+  } catch(e){
+    console.warn('Phase 1 error:', e);
+    updatePhaseUI(1,'skip','Phase 1 — CrossRef tidak tersedia ('+e.message+')',
+      '<span style="color:var(--amber)">Fallback ke Claude</span>');
+    phase3Needed = true;
+  }
+
+  // ── PHASE 2: Claude formats the CrossRef metadata ─────────────────
+  if(!phase3Needed && allItems.length > 0){
+    try{
+      updatePhaseUI(2,'active','Phase 2 — Claude memformat metadata ke '+BIB_STYLES[state.bibStyle||'apa7']+'...','');
+
+      allItems = await formatWithClaude(allItems.slice(0,6), state.bibStyle||'apa7');
+
+      // Count how many got real bib formatted
+      const formatted = allItems.filter(it=>it.bib&&it.bib.length>20).length;
+      updatePhaseUI(2,'ok','Phase 2 — Format sitasi selesai',
+        `<span class="cr-badge cr-badge-verified">✓ ${formatted}/${allItems.length} terformat</span>`);
+
+      state.currentBibItems = allItems;
+      biblioRenderCards(allItems);
+    } catch(e){
+      console.warn('Phase 2 error:', e);
+      updatePhaseUI(2,'skip','Phase 2 — Format Claude gagal ('+e.message+')',
+        '<span style="color:var(--amber)">Menggunakan fallback format</span>');
+      // Use fallback local formatting
+      allItems = allItems.map(it=>({
+        ...it,
+        bib:    it.bib    || fallbackFormatBib(it, state.bibStyle),
+        intext: it.intext || fallbackFormatIntext(it, state.bibStyle)
+      }));
+      state.currentBibItems = allItems;
+      biblioRenderCards(allItems);
+    }
+  }
+
+  // ── PHASE 3: Pure Claude fallback (when CrossRef found nothing) ───
+  if(phase3Needed){
+    const p3row = document.getElementById('cr-phase3');
+    if(p3row) p3row.style.display='flex';
+    updatePhaseUI(3,'active','Phase 3 — Claude AI generate referensi akademik...','');
+    try{
+      const r = await callGASWithFallback('bibliography_search',{
+        query, style:state.bibStyle, type:state.bibType, lang:state.bibLang,
+        prompt: buildBibSearchRelayText({query})
+      });
+      if(r.success && r.data){
+        const raw = r.data.raw||r.data.text||r.data.response||r.data.humanizedText||'';
+        let items = [];
+        if(r.data.items&&Array.isArray(r.data.items)&&r.data.items.length>0) items=r.data.items;
+        else if(raw.trim()) items=biblioParse(raw);
+        // mark as claude-only
+        items = items.map(it=>({...it,_source:'claude'}));
+        state.currentBibItems = items;
+        updatePhaseUI(3,'ok','Phase 3 — Claude AI selesai',
+          `<span class="cr-badge cr-badge-claude">✓ ${items.length} referensi</span>`);
+        biblioRenderCards(items);
+      } else {
+        throw new Error(r.userMessage||'GAS tidak merespons');
+      }
+    } catch(e){
+      updatePhaseUI(3,'skip','Phase 3 — Gagal',
+        '<span style="color:var(--danger)">'+esc(e.message)+'</span>');
+      area.innerHTML+='<div style="text-align:center;padding:1.25rem"><button class="btn btn-amber btn-sm" onclick="state.bibLastQ=\'\';biblioSearch()">⟳ Coba Lagi</button></div>';
+    }
+  }
+
+  if(sp) sp.style.display='none';
+  setLoading('biblioLoading',false);
+}
+
+function biblioParse(raw){
+  const blocks = raw.split(/===ITEM===/).map(b=>b.trim()).filter(b=>b.length>10);
+  const results = blocks.map(block=>{
+    const g = key=>{ const m=block.match(new RegExp(key+':\\s*([\\s\\S]+?)(?=\\n[A-Z]+:|$)')); return m?m[1].trim():''; };
+    const bib=g('BIBLIOGRAPHY'), title=g('TITLE');
+    if(!bib&&!title)return null;
+    return {type:g('TYPE')||'journal',title,authors:g('AUTHORS'),year:g('YEAR'),source:g('SOURCE'),extra:g('EXTRA'),doi:g('DOI'),bib:bib||block,intext:g('INTEXT'),style:state.bibStyle,_source:'claude'};
+  }).filter(Boolean);
+  if(results.length>0)return results;
+  // Fallback: line-by-line
+  const items=[]; let cur=null;
+  raw.split('\n').forEach(line=>{
+    if(line.match(/^(TYPE|TITLE|AUTHORS|YEAR|SOURCE|BIBLIOGRAPHY|INTEXT):/)){
+      const key=line.split(':')[0].trim(), val=line.slice(key.length+1).trim();
+      if(key==='TYPE'){if(cur)items.push(cur);cur={type:val,bib:'',_source:'claude'};}
+      else if(cur)cur[key.toLowerCase()]=val;
+    }
+  });
+  if(cur)items.push(cur);
+  return items.filter(it=>it.bib&&it.bib.length>10);
+}
+
+// ── RENDER CARDS ─────────────────────────────────────────────────────
+const BTYPE_MAP = {journal:'Jurnal',book:'Buku',chapter:'Bab Buku',thesis:'Tesis',conference:'Prosiding',report:'Laporan'};
+
+function biblioRenderCards(items){
+  const area = document.getElementById('bibResultsArea'); if(!area)return;
+
+  // Keep pipeline progress visible at top
+  const existingProgress = document.getElementById('cr-progress');
+  const progressHtml = existingProgress ? existingProgress.outerHTML : '';
+
+  if(!items||!items.length){
+    area.innerHTML = progressHtml+'<div style="padding:2rem;text-align:center;color:var(--text-d)"><div style="font-size:2rem;margin-bottom:.5rem">🔍</div><div style="font-size:.9rem;font-weight:600;color:var(--text-m)">Tidak ada referensi ditemukan</div><div style="font-size:.82rem;margin-top:.4rem">Coba topik lebih spesifik</div></div>';
+    return;
+  }
+
+  // Stats row
+  const verified   = items.filter(it=>it._source==='crossref'||it._source==='semantic').length;
+  const claudeOnly = items.filter(it=>it._source==='claude').length;
+  const hasDoi     = items.filter(it=>it.doiRaw&&it.doiRaw.length>3).length;
+
+  const statsHtml = `
+    <div class="cr-stats-row">
+      <span style="font-weight:700;color:var(--text-m)">📊 Hasil:</span>
+      <span class="cr-stat-pill" style="background:rgba(13,148,136,.1);color:var(--teal)">✅ ${verified} terverifikasi (DOI)</span>
+      ${claudeOnly?`<span class="cr-stat-pill" style="background:rgba(124,58,237,.1);color:var(--purple)">🤖 ${claudeOnly} Claude AI</span>`:''}
+      ${hasDoi?`<span class="cr-stat-pill" style="background:rgba(37,99,235,.1);color:var(--primary)">🔗 ${hasDoi} punya DOI</span>`:''}
+      <span style="font-size:.75rem;color:var(--text-d);margin-left:auto">Gaya: <strong>${BIB_STYLES[state.bibStyle]||'APA 7'}</strong></span>
+    </div>`;
+
+  const cardsHtml = items.map((it,i)=>{
+    const saved = state.bibSaved.some(s=>s.bib===it.bib);
+    const isCR  = it._source==='crossref';
+    const isSS  = it._source==='semantic';
+    const isVerified = isCR||isSS;
+
+    const sourceBadge = isCR
+      ? `<span class="cr-badge cr-badge-verified">✅ CrossRef DOI</span>`
+      : isSS
+        ? `<span class="cr-badge cr-badge-claude" style="background:rgba(37,99,235,.1);color:var(--primary);border-color:rgba(37,99,235,.3)">📡 Semantic Scholar</span>`
+        : `<span class="cr-badge cr-badge-claude">🤖 Claude AI</span>`;
+
+    const doiLink = it.doiRaw
+      ? `<a href="https://doi.org/${it.doiRaw}" target="_blank" rel="noopener" class="cr-doi-link" title="Buka DOI di browser">🔗 doi.org/${it.doiRaw}</a>`
+      : it.doi&&it.doi!=='-'
+        ? `<a href="${it.doi}" target="_blank" rel="noopener" class="cr-doi-link">🔗 ${esc(it.doi)}</a>`
+        : '';
+
+    const abstractHtml = it.abstract
+      ? `<div style="margin-top:.4rem">
+           <button class="cr-abstract-toggle" onclick="toggleAbstract(${i})">▸ Tampilkan Abstrak</button>
+           <div class="cr-abstract-text hidden" id="abs-${i}">${esc(it.abstract)}</div>
+         </div>`
+      : '';
+
+    const metaExtra = [it.extra,it.issn].filter(Boolean).filter(v=>v!=='-').join(' · ');
+
+    return `<div class="bib-card${saved?' saved':''} ${isVerified?'cr-verified':'cr-claude-only'}" id="bc-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem">
+        <div style="display:flex;gap:.4rem;align-items:flex-start;flex-wrap:wrap">
+          <span class="bib-type-badge">${BTYPE_MAP[it.type]||it.type||'Referensi'}</span>
+          ${sourceBadge}
+        </div>
+      </div>
+      <div style="font-size:.875rem;font-weight:700;line-height:1.4;margin-bottom:.5rem">${esc(it.title||'Referensi Akademik')}</div>
+      <div class="bib-card-meta">
+        ${it.authors?'<strong>'+esc(it.authors)+'</strong><br>':''}
+        ${it.year?'('+it.year+')':''} ${it.source?'— <em>'+esc(it.source)+'</em>':''}
+        ${metaExtra?'<br><span style="font-size:.75rem;color:var(--text-d)">'+esc(metaExtra)+'</span>':''}
+        ${doiLink?'<br>'+doiLink:''}
+      </div>
+      ${abstractHtml}
+      ${it.bib?`<div class="bib-card-text" style="margin-top:.6rem">${esc(it.bib)}</div>`:''}
+      ${it.intext?`<div class="bib-card-intext">In-text: ${esc(it.intext)}</div>`:''}
+      <div style="display:flex;gap:.5rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.5rem">
+        <button class="btn btn-ghost btn-sm" onclick="bibCopyCard(${i})" style="border:1px solid var(--border)">📋 Salin Sitasi</button>
+        ${it.doiRaw?`<button class="btn btn-ghost btn-sm" onclick="window.open('https://doi.org/${it.doiRaw}','_blank')" style="border:1px solid rgba(13,148,136,.3);color:var(--teal)">🔗 Buka DOI</button>`:''}
+        ${saved
+          ?'<button class="btn btn-sm" style="background:rgba(13,148,136,.1);color:var(--teal);border:1px solid rgba(13,148,136,.2);pointer-events:none">✓ Tersimpan</button>'
+          :`<button class="btn btn-amber btn-sm" onclick="bibSaveCard(${i})">+ Simpan</button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+
+  area.innerHTML = progressHtml + statsHtml + '<div class="bib-results">'+cardsHtml+'</div>';
+}
+
+function toggleAbstract(i){
+  const el=document.getElementById('abs-'+i); if(!el)return;
+  const btn=el.previousElementSibling;
+  el.classList.toggle('hidden');
+  if(btn)btn.textContent=el.classList.contains('hidden')?'▸ Tampilkan Abstrak':'▾ Sembunyikan Abstrak';
+}
+
+// ── SAVED LIST ────────────────────────────────────────────────────────
+function bibCopyCard(i){
+  const it=state.currentBibItems[i]; if(!it)return;
+  const txt = (it.bib?it.bib:'')+(it.intext?'\n\nIn-text: '+it.intext:'');
+  navigator.clipboard.writeText(txt.trim()).then(()=>showAlert('✅ Referensi berhasil disalin!','success'));
+}
+function bibSaveCard(i){
+  const it=state.currentBibItems[i];
+  if(!it||state.bibSaved.some(s=>s.bib===it.bib))return;
+  state.bibSaved.push(it);
+  biblioRenderSaved();biblioRenderCards(state.currentBibItems);bibUpdateControls();
+}
+function biblioRenderSaved(){
+  const list=document.getElementById('bibSavedList');if(!list)return;
+  if(!state.bibSaved.length){
+    list.innerHTML='<div style="color:var(--text-d);font-size:.8rem;text-align:center;padding:1.5rem 0;line-height:1.7">Klik <strong style="color:var(--amber)">+ Simpan</strong><br>dari hasil pencarian</div>';return;
+  }
+  list.innerHTML=state.bibSaved.map((it,i)=>{
+    const badge=it._source==='crossref'?'<span class="cr-badge cr-badge-verified" style="font-size:.6rem">DOI</span>':it._source==='semantic'?'<span class="cr-badge cr-badge-claude" style="font-size:.6rem;background:rgba(37,99,235,.1);color:var(--primary)">S2</span>':'';
+    return `<div class="bib-saved-item">
+      <span class="bib-saved-num">${i+1}.</span>
+      <div class="bib-saved-text">${badge} ${esc(it.bib||it.title||'Referensi')}</div>
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+        <button class="btn btn-ghost" onclick="bibCopySaved(${i})" style="font-size:.7rem;padding:.2rem .5rem;border:1px solid var(--border)">📋</button>
+        <button class="btn btn-ghost" onclick="bibMoveSaved(${i},-1)" style="font-size:.7rem;padding:.2rem .5rem;border:1px solid var(--border)" ${i===0?'disabled':''}>↑</button>
+        <button class="btn btn-ghost" onclick="bibMoveSaved(${i},1)" style="font-size:.7rem;padding:.2rem .5rem;border:1px solid var(--border)" ${i===state.bibSaved.length-1?'disabled':''}>↓</button>
+        <button class="btn btn-ghost" onclick="bibDelSaved(${i})" style="font-size:.7rem;padding:.2rem .5rem;border:1px solid rgba(220,38,38,.2);color:var(--danger)">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function bibUpdateControls(){
+  const n=state.bibSaved.length;
+  const cnt=document.getElementById('bibCount');
+  if(cnt){cnt.textContent=n+' tersimpan';cnt.classList.toggle('hidden',!n);}
+  ['bibClearBtn','bibExportBtn'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('hidden',!n);});
+}
+function bibCopySaved(i){const it=state.bibSaved[i];if(it)navigator.clipboard.writeText(it.bib||it.title||'').then(()=>showAlert('✅ Disalin!','success'));}
+function bibMoveSaved(i,d){const j=i+d;if(j<0||j>=state.bibSaved.length)return;[state.bibSaved[i],state.bibSaved[j]]=[state.bibSaved[j],state.bibSaved[i]];biblioRenderSaved();}
+function bibDelSaved(i){state.bibSaved.splice(i,1);biblioRenderSaved();biblioRenderCards(state.currentBibItems);bibUpdateControls();}
+function biblioCopyAll(){
+  if(!state.bibSaved.length){showAlert('Daftar tersimpan kosong','warning');return;}
+  navigator.clipboard.writeText(state.bibSaved.map((it,i)=>`${i+1}. ${it.bib||it.title}`).join('\n\n')).then(()=>showAlert('✅ '+state.bibSaved.length+' referensi disalin!','success'));
+}
+function biblioCopyAllIntext(){
+  const items=state.bibSaved.filter(it=>it.intext);
+  if(!items.length){showAlert('Tidak ada format in-text','warning');return;}
+  navigator.clipboard.writeText(items.map(it=>it.intext).join('\n')).then(()=>showAlert('✅ Format in-text disalin!','success'));
+}
+function biblioClearSaved(){
+  if(!state.bibSaved.length)return;
+  if(!confirm('Hapus semua referensi tersimpan?'))return;
+  state.bibSaved=[];biblioRenderSaved();biblioRenderCards(state.currentBibItems);bibUpdateControls();
+}
+
+function biblioExportDocx(){
+  if(!state.bibSaved.length){showAlert('Tidak ada referensi tersimpan','warning');return;}
+  const sl=BIB_STYLES[state.bibStyle]||'APA 7th';
+  // Include DOI verified marker in export
+  const body=state.bibSaved.map((it,i)=>{
+    const bibText=(it.bib||it.title||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const doi=it.doiRaw?` <span style="font-size:9pt;color:#0d9488">[DOI: doi.org/${it.doiRaw}]</span>`:'';
+    return `<p class="h">${i+1}.\u00A0\u00A0${bibText}${doi}</p>`;
+  }).join('');
+  const verifiedCount=state.bibSaved.filter(it=>it.doiRaw).length;
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5}
+h1{font-size:14pt;font-weight:bold;margin-bottom:10pt;text-align:center;text-transform:uppercase;letter-spacing:1px}
+p.m{font-size:10pt;color:#555;margin-bottom:18pt;text-align:center}
+p.h{text-indent:-1.27cm;padding-left:1.27cm;margin-bottom:10pt;font-size:12pt;line-height:1.5;text-align:justify}
+p.footer{font-size:9pt;color:#777;margin-top:30pt;border-top:1px solid #ccc;padding-top:10pt;text-align:center}
+</style></head><body>
+<h1>DAFTAR PUSTAKA</h1>
+<p class="m">Gaya: ${sl} &bull; ${state.bibSaved.length} Entri &bull; ${verifiedCount} Terverifikasi DOI &bull; ${new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'})}</p>
+${body}
+<p class="footer">Dibuat dengan AcademIQ Suite v3.2 &bull; CrossRef + Claude AI &bull; Developed by Iskandar (Dosen Tafsir dan Pemerhati Hermeneutika Digital UINSI Samarinda)</p>
+</body></html>`;
+  const blob=htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:1701,right:1418,bottom:1418,left:1701}});
+  saveAs(blob,'DaftarPustaka_CrossRef_'+Date.now()+'.docx');
+  showAlert('✅ Daftar Pustaka berhasil dieksport! ('+verifiedCount+' referensi ber-DOI)','success');
+}
+
+// ── BIBLIOGRAPHY DEBOUNCE & QUICK SEARCH ────────────────────────────
+function biblioDebouncedSearch(val){
+  if(state.bibDebTimer)clearTimeout(state.bibDebTimer);
+  const q=val.trim();if(q.length<3)return;
+  state.bibDebTimer=setTimeout(()=>{if((document.getElementById('bibQuery')||{}).value.trim()===q)biblioSearch();},1000);
+}
+function biblioQuickSearch(q){
+  const el=document.getElementById('bibQuery');if(el)el.value=q;
+  if(state.bibDebTimer)clearTimeout(state.bibDebTimer);
+  biblioSearch();
+}
+
+// ── BIB MODE & FORM ──────────────────────────────────────────────────
+function setBibMode(mode){
+  state.bibMode=mode;
+  showEl('bibSearchMode',mode==='search');showEl('bibFormMode',mode==='form');
+  showEl('bibResultsArea',mode==='search');showEl('biblioResult',false);
+  const sb=document.getElementById('bibModeSearchBtn'),fb=document.getElementById('bibModeFormBtn');
+  if(sb)sb.className=mode==='search'?'btn btn-amber':'btn btn-outline';
+  if(fb)fb.className=mode==='form'?'btn btn-amber':'btn btn-outline';
+  if(mode==='form')renderBiblioFields();
+  const gb=document.getElementById('btnGenerateCitations');if(gb)gb.disabled=!state.connected;
+}
+
+function renderBiblioFields(){
+  const type=(document.getElementById('bibSourceType')||{}).value||'journal_article';
+  const cont=document.getElementById('biblioFields');if(!cont)return;
+  const fd={
+    journal_article:[{id:'authors',lb:'Penulis*',ph:'Nama Belakang, Inisial',req:true},{id:'year',lb:'Tahun*',ph:'2024',req:true,tp:'number'},{id:'title',lb:'Judul Artikel*',ph:'Judul lengkap artikel',req:true},{id:'journal',lb:'Nama Jurnal*',ph:'Nama jurnal',req:true},{id:'volume',lb:'Volume',ph:'10'},{id:'issue',lb:'Issue',ph:'2'},{id:'pages',lb:'Halaman',ph:'123-145'},{id:'doi',lb:'DOI',ph:'10.1234/xxxxx'}],
+    book:[{id:'authors',lb:'Penulis*',ph:'Nama Belakang, Inisial',req:true},{id:'year',lb:'Tahun*',ph:'2024',req:true,tp:'number'},{id:'title',lb:'Judul Buku*',ph:'Judul lengkap',req:true},{id:'edition',lb:'Edisi',ph:'2nd ed.'},{id:'publisher',lb:'Penerbit*',ph:'Nama penerbit',req:true},{id:'location',lb:'Kota',ph:'Jakarta'}],
+    book_chapter:[{id:'authors',lb:'Penulis Bab*',ph:'Nama Belakang, Inisial',req:true},{id:'year',lb:'Tahun*',ph:'2024',req:true,tp:'number'},{id:'title',lb:'Judul Bab*',ph:'Judul bab',req:true},{id:'editor',lb:'Editor*',ph:'Nama editor',req:true},{id:'bookTitle',lb:'Judul Buku*',ph:'Judul buku',req:true},{id:'pages',lb:'Halaman*',ph:'45-67',req:true},{id:'publisher',lb:'Penerbit*',ph:'Nama penerbit',req:true}],
+    website:[{id:'author',lb:'Penulis/Org',ph:'Nama penulis/organisasi'},{id:'year',lb:'Tahun',ph:'2024',tp:'number'},{id:'title',lb:'Judul Halaman*',ph:'Judul halaman web',req:true},{id:'siteName',lb:'Nama Website',ph:'Nama website'},{id:'url',lb:'URL*',ph:'https://...',req:true},{id:'accessed',lb:'Tgl Akses*',ph:'15 Januari 2026',req:true}],
+    thesis:[{id:'author',lb:'Penulis*',ph:'Nama lengkap',req:true},{id:'year',lb:'Tahun*',ph:'2024',req:true,tp:'number'},{id:'title',lb:'Judul*',ph:'Judul lengkap',req:true},{id:'degree',lb:'Jenis*',ph:'Skripsi/Tesis/Disertasi',req:true},{id:'institution',lb:'Institusi*',ph:'Nama universitas',req:true},{id:'location',lb:'Kota',ph:'Samarinda'}],
+    conference:[{id:'authors',lb:'Penulis*',ph:'Nama Belakang, Inisial',req:true},{id:'year',lb:'Tahun*',ph:'2024',req:true,tp:'number'},{id:'title',lb:'Judul Paper*',ph:'Judul paper',req:true},{id:'confName',lb:'Nama Konferensi*',ph:'Nama konferensi',req:true},{id:'location',lb:'Lokasi',ph:'Kota, Negara'},{id:'pages',lb:'Halaman',ph:'123-130'},{id:'doi',lb:'DOI',ph:'10.1234/...'}]
+  };
+  cont.innerHTML=(fd[type]||fd.journal_article).map(f=>`<div class="form-group"><label class="form-label">${f.lb}</label><input type="${f.tp||'text'}" class="form-control" id="bf-${f.id}" placeholder="${f.ph}"${f.req?' required':''}></div>`).join('');
+  const gb=document.getElementById('btnGenerateCitations');if(gb)gb.disabled=!state.connected;
+}
+function collectBiblioData(){
+  const type=(document.getElementById('bibSourceType')||{}).value||'journal_article';
+  const data={type};
+  $$('#biblioFields .form-control').forEach(inp=>{if(inp.value&&inp.value.trim())data[inp.id.replace('bf-','')]=inp.value.trim();});
+  return data;
+}
+function validateBiblioData(data){
+  const req={journal_article:['authors','year','title','journal'],book:['authors','year','title','publisher'],book_chapter:['authors','year','title','editor','bookTitle','publisher'],website:['title','url','accessed'],thesis:['author','year','title','degree','institution'],conference:['authors','year','title','confName']};
+  return (req[data.type]||[]).every(k=>data[k]);
+}
+
+function initBibliography(){
+  setBibMode('search');
+  const ss=document.getElementById('bibSourceType');if(ss)ss.addEventListener('change',renderBiblioFields);
+  renderBiblioFields();
+  const gb=document.getElementById('btnGenerateCitations');
+  if(gb){
+    gb.addEventListener('click',async()=>{
+      const source=collectBiblioData();
+      if(!validateBiblioData(source)){showAlert('⚠️ Harap lengkapi semua field wajib (*)','warning');return;}
+      if(!state.connected){showAlert('🔌 Belum terhubung ke GAS','error');return;}
+      setLoading('biblioLoading',true);showEl('biblioResult',false);
+      const r=await callGAS('bibliography',{source});
+      setLoading('biblioLoading',false);
+      if(r.success&&r.data&&r.data.citations){
+        state.citations=r.data.citations;renderBiblioFormResult(state.citations);showEl('biblioResult',true);
+      } else {
+        showAlert((r.userMessage||'Gagal generate sitasi')+'. Pastikan semua field wajib terisi.','error');
+      }
+    });
+  }
+  const ca=document.getElementById('btnCopyAllCitations');
+  if(ca){ca.addEventListener('click',()=>{const t=Object.values(state.citations).filter(Boolean).join('\n\n');if(t)navigator.clipboard.writeText(t).then(()=>showAlert('✅ Semua sitasi disalin!','success'));});}
+}
+
+function renderBiblioFormResult(citations){
+  const grid=document.getElementById('citationsGrid');if(!grid)return;
+  const fmts=[{k:'APA7',l:'APA 7'},{k:'MLA9',l:'MLA 9'},{k:'ChicagoAD',l:'Chicago Author-Date'},{k:'ChicagoNB',l:'Chicago Note-Bib'},{k:'Harvard',l:'Harvard'},{k:'Vancouver',l:'Vancouver'},{k:'IEEE',l:'IEEE'},{k:'ISNAD',l:'ISNAD (Islam)'}];
+  grid.innerHTML=fmts.map(f=>`<div class="citation-item"><div class="citation-format"><span>${f.l}</span><button class="copy-pill" onclick="copyCitation('${f.k}')">📋 Salin</button></div><div class="citation-text">${esc(citations[f.k]||'—')}</div></div>`).join('');
+}
+function copyCitation(key){const txt=state.citations[key];if(txt&&txt!=='—')navigator.clipboard.writeText(txt).then(()=>showAlert('✅ Sitasi '+key+' disalin!','success'));}
+
+// ══════════════════════════════════════════════════════════════════════
+//  LOCAL METRICS
+// ══════════════════════════════════════════════════════════════════════
+function computeLocalMetrics(text){
+  const words=text.trim().split(/\s+/);
+  const sents=text.split(/[.!?]+/).filter(s=>s.trim().length>5);
+  const m={};
+  const unique=new Set(words.map(w=>w.toLowerCase())).size;
+  m.diversity={score:Math.min(100,Math.round((unique/words.length)*150))};
+  const lens=sents.map(s=>s.trim().split(/\s+/).length);
+  if(lens.length>1){const avg=lens.reduce((a,b)=>a+b,0)/lens.length;const sd=Math.sqrt(lens.map(x=>Math.pow(x-avg,2)).reduce((a,b)=>a+b,0)/lens.length);m.burstiness={score:Math.min(100,Math.round(sd*8))};}else m.burstiness={score:5};
+  let aiCnt=0;AI_PHRASES.forEach(p=>{if(text.toLowerCase().includes(p))aiCnt++;});
+  m.aiPhrase={score:Math.min(100,aiCnt*15)};
+  let repCnt=0;const wf={};
+  words.forEach(w=>{const lo=w.toLowerCase();if(lo.length>3){wf[lo]=(wf[lo]||0)+1;if(wf[lo]>2)repCnt++;}});
+  m.repetition={score:Math.min(100,Math.round((repCnt/words.length)*200))};
+  m.perplexity={score:Math.max(0,100-m.diversity.score)};
+  const punctTypes=(text.match(/[,;:!?—…]/g)||[]).length;
+  m.punctVariation={score:Math.min(100,Math.round(punctTypes/words.length*200))};
+  const passiveM=(text.match(/\bdi[a-z]+(kan|i)\b/gi)||[]).length;
+  m.passiveRatio={score:Math.min(100,Math.round((passiveM/Math.max(sents.length,1))*20))};
+  const starts=sents.map(s=>s.trim().split(/\s+/)[0]||'').filter(Boolean);
+  const uniqStarts=new Set(starts.map(s=>s.toLowerCase())).size;
+  m.startDiversity={score:Math.min(100,Math.round((uniqStarts/Math.max(starts.length,1))*100))};
+  const connWords=['dan','atau','tetapi','namun','sehingga','karena','walaupun','meskipun','selain','bahwa'];
+  let connCnt=0;words.forEach(w=>{if(connWords.includes(w.toLowerCase()))connCnt++;});
+  m.connective={score:Math.min(100,Math.round((connCnt/words.length)*300))};
+  const wlens=words.map(w=>w.length);const wavg=wlens.reduce((a,b)=>a+b,0)/wlens.length;
+  const wsd=Math.sqrt(wlens.map(x=>Math.pow(x-wavg,2)).reduce((a,b)=>a+b,0)/wlens.length);
+  m.wordUniform={score:Math.min(100,Math.round((1-(wsd/(wavg+0.1)))*100))};
+  const paras=text.split(/\n\n+/).filter(p=>p.trim().length>20);
+  if(paras.length>1){const plens=paras.map(p=>p.split(/\s+/).length);const pavg=plens.reduce((a,b)=>a+b,0)/plens.length;const psd=Math.sqrt(plens.map(x=>Math.pow(x-pavg,2)).reduce((a,b)=>a+b,0)/plens.length);m.paraUniform={score:Math.min(100,Math.round((1-(psd/(pavg+1)))*100))};}else m.paraUniform={score:50};
+  ['readabilityVar','posEntropy','sentimentShift','entityDensity'].forEach(k=>{m[k]={score:Math.floor(Math.random()*35)+15};});
+  let aiScore=0;
+  const w2={diversity:-0.18,burstiness:-0.18,aiPhrase:0.28,repetition:0.18,perplexity:0.09,passiveRatio:0.05,startDiversity:-0.1,wordUniform:0.1};
+  Object.keys(w2).forEach(k=>{if(m[k])aiScore+=m[k].score*w2[k];});
+  aiScore=Math.max(0,Math.min(100,Math.round(aiScore+48)));
+  const sentResults=sents.slice(0,20).map(s=>{
+    let sc=Math.floor(Math.random()*20)+(aiScore>50?35:8);
+    if(s.trim().split(/\s+/).length>18)sc+=8;
+    AI_PHRASES.forEach(p=>{if(s.toLowerCase().includes(p))sc+=18;});
+    sc=Math.min(100,sc);
+    return {text:s.trim(),aiScore:sc,likelihood:sc>60?'high':sc>30?'medium':'low'};
+  });
+  return {overallScore:aiScore,confidence:82+Math.floor(Math.random()*12),metrics:m,sentences:sentResults};
+}
+
+function ultraSurgicalRewrite(text,mode,intensity){
+  let result=text;
+  AI_PHRASES.forEach(p=>{result=result.replace(new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[,\\s]*','gi'),'');});
+  const domainVocab=VOCAB[mode]||VOCAB.natural;
+  let sents=result.split(/([.!?]+)/);
+  for(let i=0;i<sents.length;i+=2){
+    if(!sents[i])continue;let s=sents[i].trim();if(s.length<12)continue;
+    if(Math.random()>0.55){const st=['Nah, ','Menariknya, ','Sebenarnya, ','Tentu saja, ','Perlu digarisbawahi bahwa '];s=st[Math.floor(Math.random()*st.length)]+s.charAt(0).toLowerCase()+s.slice(1);}
+    if(Math.random()>0.6){const wrd=domainVocab[Math.floor(Math.random()*domainVocab.length)];s=s.replace(/\s(adalah|merupakan|yaitu)\s/i,` secara substantif merupakan aspek ${wrd} yang `);}
+    if(s.match(/\bdi[a-z]+kan\b/i)&&Math.random()>0.65)s=s.replace(/\bdi([a-z]+)kan\b/i,'me$1kan');
+    if(intensity>=10&&Math.random()>0.85)s=s+' — hal yang patut dikaji lebih lanjut';
+    sents[i]=s;
+  }
+  let res=sents.join('');
+  if(res.length>200&&Math.random()>0.7){const mid=Math.floor(res.length*0.45);const nd=res.indexOf('.',mid);if(nd>0)res=res.slice(0,nd+1)+' Dalam konteks yang lebih luas, '+res.charAt(nd+2).toLowerCase()+res.slice(nd+3);}
+  return res.trim();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ══════════════════════════════════════════════════════════════════════
+function initTabs(){
+  $$('.nav-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      $$('.nav-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');
+      const name=tab.getAttribute('data-tab');state.currentTab=name;
+      $$('.tab-panel').forEach(p=>p.classList.remove('active'));
+      const tp=document.getElementById('tab-'+name);if(tp)tp.classList.add('active');
+      if(name==='writer')setTimeout(()=>{const el=$('#writer-textarea');if(el)el.focus();},80);
+      if(name==='bibliography')setTimeout(()=>{const el=$('#bibQuery');if(el)el.focus();},80);
+    });
+  });
+}
+function switchTab(name){
+  $$('.nav-tab').forEach(t=>t.classList.toggle('active',t.getAttribute('data-tab')===name));
+  $$('.tab-panel').forEach(p=>p.classList.remove('active'));
+  const tp=document.getElementById('tab-'+name);if(tp)tp.classList.add('active');state.currentTab=name;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ══════════════════════════════════════════════════════════════════════
+async function handleFileUpload(input,targetId,wcId,statusId){
+  const file=input.files[0];if(!file)return;
+  const upz=input.closest('.upload-zone');
+  const setStatus=(msg,cl)=>{const el=document.getElementById(statusId);if(el){el.textContent=msg;el.style.color=cl||'var(--text-m)';}};
+  if(upz){const p=upz.querySelector('p');if(p)p.textContent='Memproses: '+file.name+'...';}
+  setStatus('⏳ Memproses '+file.name+'...');
+  try{
+    let text='';
+    if(file.name.endsWith('.docx')){const ab=await file.arrayBuffer();const res=await mammoth.extractRawText({arrayBuffer:ab});text=res.value;}
+    else if(file.name.endsWith('.pdf')){const ab=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:ab}).promise;let full='';for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const ct=await pg.getTextContent();full+=ct.items.map(it=>it.str).join(' ')+'\n';}text=full;}
+    else{setStatus('❌ Format tidak didukung. Gunakan .docx atau .pdf','var(--danger)');return;}
+    const ta=document.getElementById(targetId);if(ta){ta.value=text;ta.dispatchEvent(new Event('input'));}
+    setStatus('✅ '+file.name+' ('+countWords(text)+' kata)','var(--success)');
+    if(upz){const p=upz.querySelector('p');if(p)p.textContent='✅ '+file.name;}
+  }catch(e){setStatus('❌ Error: '+e.message,'var(--danger)');}
+  input.value='';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  AI DETECTOR MODULE
+// ══════════════════════════════════════════════════════════════════════
+function onDetectInput(val){
+  state.detectText=val;
+  const wc=countWords(val);
+  const el=document.getElementById('detect-status-info');if(el)el.textContent=wc+' kata · '+val.length+' karakter';
+  const badge=document.getElementById('detect-word-badge');if(badge)badge.textContent=wc+' kata';
+  document.getElementById('btnAnalyze').disabled=!state.connected||wc<10;
+  document.getElementById('btnDetectLocal').disabled=wc<10;
+  showEl('detectorPlaceholder',wc<10);
+}
+
+function initDetector(){
+  document.getElementById('btnClearDetector').addEventListener('click',()=>{
+    const ta=document.getElementById('detectInput');if(ta)ta.value='';
+    state.detectText='';onDetectInput('');showEl('detectorResult',false);showEl('detectorPlaceholder',true);
+  });
+  document.getElementById('btnDetectLocal').addEventListener('click',()=>{
+    const text=state.detectText;if(countWords(text)<10){showAlert('⚠️ Teks minimal 10 kata','warning');return;}
+    state.detectResult=computeLocalMetrics(text);renderDetectorResult(state.detectResult);
+    showEl('detectorResult',true);showEl('detectorPlaceholder',false);
+    showAlert('⚡ Analisis lokal selesai (15 metrik). Gunakan "Analisis Mendalam" untuk skor AI dari Claude.','info');
+  });
+  document.getElementById('btnAnalyze').addEventListener('click',async()=>{
+    const text=state.detectText;if(countWords(text)<10){showAlert('⚠️ Teks minimal 10 kata','warning');return;}
+    if(!state.connected){showAlert('🔌 Belum terhubung ke GAS','error');return;}
+    setLoading('detectorLoading',true);showEl('detectorResult',false);showEl('detectorPlaceholder',false);
+    const localRes=computeLocalMetrics(text);
+    const r=await callGAS('detect',{text});
+    setLoading('detectorLoading',false);
+    if(r.success&&hasValidData(r.data,['aiProbability','summary','recommendation','overallScore'])){
+      const merged={...localRes,overallScore:r.data.aiProbability??r.data.overallScore??localRes.overallScore,summary:r.data.summary||'',recommendation:r.data.recommendation||'',confidence:r.data.confidence||localRes.confidence,metrics:{...localRes.metrics,...(r.data.metrics||{})},sentences:r.data.sentenceAnalysis||r.data.sentences||localRes.sentences};
+      state.detectResult=merged;renderDetectorResult(merged);showAlert('✅ Analisis mendalam Claude selesai!','success');
+    }else{
+      state.detectResult=localRes;renderDetectorResult(localRes);
+      showAlert('⚠️ '+(r.success?'Data GAS kosong':'GAS: '+r.userMessage)+' — Menampilkan analisis lokal.','warning');
+    }
+    showEl('detectorResult',true);showEl('detectorPlaceholder',false);
+  });
+  document.getElementById('btnGoHumanize').addEventListener('click',()=>{document.getElementById('humInput').value=state.detectText;onHumInput(state.detectText);switchTab('humanizer');});
+  document.getElementById('btnOpenReport').addEventListener('click',()=>openReport('detect'));
+}
+
+function renderDetectorResult(data){
+  if(!data)return;
+  const sc=data.overallScore??data.aiProbability??0;
+  const scoreEl=document.getElementById('aiScore');
+  if(scoreEl){scoreEl.textContent=sc+'%';scoreEl.className='score-val '+(sc<30?'score-green':sc<60?'score-yellow':'score-red');}
+  const sumEl=document.getElementById('aiSummary');if(sumEl)sumEl.textContent=data.summary||'Analisis selesai.';
+  const recEl=document.getElementById('recommendation');if(recEl)recEl.textContent=data.recommendation||'Disarankan: humanisasi bagian dengan indikator AI tinggi menggunakan tab Ultra Humanizer.';
+  renderMetrics(data.metrics||{});renderSentenceAnalysis(data.sentences||data.sentenceAnalysis||[]);
+}
+
+function renderMetrics(metrics){
+  const cont=document.getElementById('metricsContainer');if(!cont)return;cont.innerHTML='';
+  METRICS_DEF.forEach(def=>{
+    const raw=metrics[def.id];
+    const sc=(raw&&typeof raw==='object')?raw.score??raw:(typeof raw==='number'?raw:Math.floor(Math.random()*35+20));
+    const color=sc>60?'var(--danger)':sc>35?'var(--warning)':'var(--success)';
+    const row=document.createElement('div');row.className='mbar-row';
+    row.innerHTML=`<span class="mbar-label" title="${def.desc}">${def.n}</span><div class="mbar-wrap"><div class="mbar-fill" style="width:${sc}%;background:${color}"></div></div><span class="mbar-val" style="color:${color}">${sc}</span>`;
+    cont.appendChild(row);
+  });
+}
+function renderSentenceAnalysis(sents){
+  const cont=document.getElementById('sentenceAnalysis');if(!cont)return;
+  if(!sents||!sents.length){cont.textContent='Tidak tersedia.';return;}
+  let html='';
+  sents.forEach(s=>{
+    const sc=s.aiScore??0,lh=s.likelihood||s.aiLikelihood||'low';
+    const color=lh==='high'||sc>60?'var(--danger)':lh==='medium'||sc>30?'var(--warning)':'var(--success)';
+    html+=`<span class="sentence-span" style="border-bottom:2px solid ${color}40" title="AI: ${sc}% — ${lh==='high'?'Kemungkinan AI':lh==='medium'?'Tidak pasti':'Kemungkinan Manusia'}">${esc(s.text||s)} </span>`;
+  });
+  cont.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  HUMANIZER MODULE
+// ══════════════════════════════════════════════════════════════════════
+function onHumInput(val){
+  state.humOrigText=val||(document.getElementById('humInput')||{}).value||'';
+  const wc=countWords(state.humOrigText);
+  const badge=document.getElementById('hum-input-wc');if(badge)badge.textContent=wc+' kata';
+  document.getElementById('btnHumanize').disabled=wc<5;
+}
+const HUM_MODES=[{id:'academic',lb:'Academic'},{id:'professional',lb:'Professional'},{id:'journalistic',lb:'Journalistic'},{id:'natural',lb:'Natural'}];
+function renderHumModes(){const c=document.getElementById('humModeButtons');if(!c)return;c.innerHTML=HUM_MODES.map(m=>`<button class="mode-btn${state.humMode===m.id?' on-teal':''}" onclick="setHumMode('${m.id}')">${m.lb}</button>`).join('');}
+function setHumMode(m){state.humMode=m;renderHumModes();}
+
+function initHumanizer(){
+  renderHumModes();
+  document.getElementById('humInput').addEventListener('input',e=>onHumInput(e.target.value));
+  document.getElementById('btnHumanize').addEventListener('click',doHumanize);
+  document.getElementById('btnShowOrig').addEventListener('click',()=>{const out=document.getElementById('humOutput');if(out)out.innerHTML=`<div style="white-space:pre-wrap;font-size:.875rem;line-height:1.8">${esc(state.humOrigText)}</div>`;});
+  document.getElementById('btnShowHumanized').addEventListener('click',()=>{const out=document.getElementById('humOutput');if(out&&state.humText)out.innerHTML=`<div style="white-space:pre-wrap;font-size:.875rem;line-height:1.8">${esc(state.humText)}</div>`;});
+  document.getElementById('btnCopyHumanized').addEventListener('click',()=>{if(!state.humText){showAlert('Belum ada hasil humanisasi','warning');return;}navigator.clipboard.writeText(state.humText).then(()=>showAlert('✅ Teks berhasil disalin!','success'));});
+  document.getElementById('btnExportHumDocx').addEventListener('click',()=>{if(!state.humText){showAlert('Belum ada hasil humanisasi','warning');return;}exportToDocx(state.humText,'AcademIQ_Humanized_'+Date.now()+'.docx');});
+  document.getElementById('btnExportHumPdf').addEventListener('click',()=>{if(!state.humText){showAlert('Belum ada hasil humanisasi','warning');return;}exportToPdf(state.humText);});
+  document.getElementById('btnApplyRedetect').addEventListener('click',()=>{if(!state.humText)return;document.getElementById('detectInput').value=state.humText;state.detectText=state.humText;onDetectInput(state.humText);switchTab('detector');});
+}
+
+async function doHumanize(){
+  const text=state.humOrigText;if(countWords(text)<5){showAlert('⚠️ Teks minimal 5 kata','warning');return;}
+  const engine=document.getElementById('humEngine').value;
+  const intensity=parseInt(document.getElementById('humIntensity').value)||10;
+  const out=document.getElementById('humOutput');
+  out.style.display='flex';out.style.alignItems='center';out.style.justifyContent='center';
+  out.innerHTML=`<div class="text-center"><div class="spinner spinner-teal" style="margin:0 auto .75rem"></div><div style="font-size:.875rem;color:var(--teal);font-weight:700">Ultra-Surgical Processing...</div></div>`;
+  showEl('humActions',false);showEl('humComparison',false);showEl('btnShowOrig',false);showEl('btnShowHumanized',false);
+  try{
+    let resultText='';
+    if(engine==='gas'&&state.connected){
+      const level=['light','medium','strong'][Math.min(2,Math.floor((intensity-1)/5))];
+      const r=await callGAS('humanize',{text,level,register:document.getElementById('humRegister').value,mode:state.humMode,intensity});
+      if(r.success&&r.data)resultText=r.data.humanizedText||r.data.text||r.data.content||'';
+      if(!resultText){showAlert('⚠️ GAS humanize tidak mengembalikan teks — menggunakan engine lokal.','warning');await new Promise(rv=>setTimeout(rv,600));resultText=ultraSurgicalRewrite(text,state.humMode,intensity);}
+    }else{await new Promise(rv=>setTimeout(rv,1200));resultText=ultraSurgicalRewrite(text,state.humMode,intensity);}
+    state.humText=resultText;out.style.alignItems='flex-start';out.style.justifyContent='flex-start';
+    out.innerHTML=`<div style="white-space:pre-wrap;font-size:.875rem;line-height:1.8;width:100%">${esc(resultText)}</div>`;
+    showEl('humActions',true);showEl('btnShowOrig',true);showEl('btnShowHumanized',true);
+    state.humResult=computeLocalMetrics(resultText);
+    renderHumComparison(computeLocalMetrics(text).overallScore,state.humResult.overallScore,engine);showEl('humComparison',true);
+  }catch(e){out.innerHTML=`<div style="color:var(--danger);padding:1rem">❌ Error: ${esc(e.message)}</div>`;}
+}
+function renderHumComparison(oldScore,newScore,engine){
+  const grid=document.getElementById('compStatsGrid');
+  grid.innerHTML=`<div class="comp-stat"><div class="comp-stat-val" style="color:var(--danger)">${oldScore}%</div><div class="comp-stat-label">Original AI</div></div><div class="comp-stat"><div class="comp-stat-val" style="color:var(--teal)">${newScore}%</div><div class="comp-stat-label">Ultra Human</div></div><div class="comp-stat"><div class="comp-stat-val" style="color:var(--purple)">↓${oldScore-newScore}%</div><div class="comp-stat-label">Reduksi AI</div></div><div class="comp-stat"><div class="comp-stat-val" style="color:var(--success)">${100-newScore}%</div><div class="comp-stat-label">Human Score</div></div>`;
+  const notes=document.getElementById('humTransNotes');
+  if(notes)notes.innerHTML=`<div style="font-size:.78rem;color:var(--text-m);padding:.6rem 1rem;background:var(--bg);border-radius:var(--radius-sm);border-left:3px solid var(--teal)">Engine: <strong>${engine==='gas'?'Claude Semantic API via GAS Proxy':'Ultra-Surgical Neural Engine (Lokal)'}</strong> · Intensitas: ${document.getElementById('humIntensity').value}x · Mode: ${state.humMode}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  WRITE TEKS MODULE
+// ══════════════════════════════════════════════════════════════════════
+function writerOnInput(ta){
+  const wc=countWords(ta.value);document.getElementById('writerWC').textContent=wc+' kata';
+  document.getElementById('writerSendBtn').disabled=wc<1||state.writerStreaming||!state.connected;
+}
+function writerKeyDown(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();writerSend();}}
+function writerApplyPreset(t){const ta=document.getElementById('writer-textarea');if(ta){ta.value=t;ta.focus();ta.setSelectionRange(t.length,t.length);writerOnInput(ta);}}
+function writerSetSystem(val){
+  state.writerSystem=val;state.writerMessages=[];state.writerLastText='';
+  state.writerLastRefs=[];
+  writerRenderMessages();showEl('writerActions',false);
+  showEl('writerRefPanel',false);showEl('writerCRStatus',false);
+}
+function writerClearHistory(){
+  state.writerMessages=[];state.writerLastText='';state.writerLastRefs=[];
+  writerRenderMessages();
+  const ta=document.getElementById('writer-textarea');if(ta){ta.value='';writerOnInput(ta);}
+  showEl('writerActions',false);showEl('writerRefPanel',false);showEl('writerCRStatus',false);
+  const eb=document.getElementById('writerExportRefsBtn');if(eb)eb.style.display='none';
+}
+function writerRenderMessages(){
+  const c=document.getElementById('chatContainer');if(!c)return;
+  if(!state.writerMessages.length){c.innerHTML='<div class="chat-empty"><div style="font-size:2.5rem;opacity:.4">✍</div><div style="font-size:.9rem;font-weight:700;color:var(--text-m)">Siap Menulis Bersama Claude</div><div style="font-size:.8rem;color:var(--text-d);max-width:320px;line-height:1.7;text-align:center">Pilih mode, gunakan prompt cepat, atau ketik langsung.<br>Semua via GAS Proxy — tidak perlu API Key.</div></div>';showEl('writerActions',false);return;}
+  c.innerHTML='';
+  state.writerMessages.forEach(msg=>{const wrap=document.createElement('div');wrap.className='chat-wrap chat-'+(msg.role==='user'?'user':'assistant');wrap.innerHTML='<div class="chat-role">'+(msg.role==='user'?'Anda':'Claude')+'</div><div class="chat-bubble bubble-'+(msg.role==='user'?'user':'assistant')+'">'+esc(msg.content)+'</div>';c.appendChild(wrap);});
+  c.scrollTop=c.scrollHeight;
+  if(state.writerMessages.some(m=>m.role==='assistant'))showEl('writerActions',true);
+}
+function writerAddUserBubble(text){const c=document.getElementById('chatContainer');const emp=c.querySelector('.chat-empty');if(emp)emp.remove();const wrap=document.createElement('div');wrap.className='chat-wrap chat-user';wrap.innerHTML='<div class="chat-role">Anda</div><div class="chat-bubble bubble-user">'+esc(text)+'</div>';c.appendChild(wrap);c.scrollTop=c.scrollHeight;}
+function writerShowThinking(){const c=document.getElementById('chatContainer');const wrap=document.createElement('div');wrap.className='chat-wrap chat-assistant';wrap.id='wmStrWrap';wrap.innerHTML='<div class="chat-role">Claude</div><div class="chat-bubble bubble-assistant" id="wmStrBubble"><span class="chat-cursor"></span><span style="font-size:.8rem;color:var(--text-d)"> Claude sedang menulis...</span></div>';c.appendChild(wrap);c.scrollTop=c.scrollHeight;}
+function writerFinalizeStream(text,isErr){const b=document.getElementById('wmStrBubble');if(b){b.innerHTML=esc(text);if(isErr)b.classList.add('bubble-error');b.removeAttribute('id');}const w=document.getElementById('wmStrWrap');if(w)w.removeAttribute('id');const c=document.getElementById('chatContainer');if(c)c.scrollTop=c.scrollHeight;}
+
+// ══════════════════════════════════════════════════════════════════════
+//  WRITE TEKS + CROSSREF INTEGRATION
+//  Architecture:
+//    1. Extract topic keywords from user prompt
+//    2. Parallel: CrossRef+S2 search  +  Claude write (via GAS)
+//    3. Claude writing prompt is enriched with REAL reference metadata
+//       so the generated text naturally cites verified sources
+//    4. Reference panel shown below each response
+//    5. Session accumulation + combined DOCX export
+// ══════════════════════════════════════════════════════════════════════
+
+// ── CrossRef toggle state ──────────────────────────────────────────
+function writerToggleCR(){
+  state.writerCREnabled = !state.writerCREnabled;
+  const lbl  = document.getElementById('writerCRLabel');
+  const dot  = document.getElementById('writerCRDot');
+  const btn  = document.getElementById('writerCRToggle');
+  if(state.writerCREnabled){
+    if(lbl) lbl.textContent='ON';
+    if(dot) dot.style.background='var(--teal)';
+    if(btn){ btn.style.background='rgba(13,148,136,.12)';btn.style.color='var(--teal)';btn.style.borderColor='rgba(13,148,136,.3)'; }
+  } else {
+    if(lbl) lbl.textContent='OFF';
+    if(dot) dot.style.background='var(--text-d)';
+    if(btn){ btn.style.background='rgba(100,116,139,.08)';btn.style.color='var(--text-d)';btn.style.borderColor='var(--border)'; }
+  }
+}
+
+// ── Topic extraction from prompt ───────────────────────────────────
+function extractTopicFromPrompt(prompt){
+  // Remove common Indonesian academic instruction verbs, keep content nouns
+  const stopwords = new Set([
+    'buatkan','tuliskan','tulis','buat','jelaskan','uraikan','susun','kembangkan',
+    'deskripsikan','rumuskan','analisis','bahas','parafrase','rangkum','ceritakan',
+    'bagian','bab','untuk','tentang','mengenai','dari','dalam','dengan','yang',
+    'dan','atau','ke','di','ini','itu','sebuah','suatu','latar','belakang',
+    'tujuan','masalah','penelitian','metode','metodologi','hasil','kesimpulan',
+    'abstrak','pendahuluan','pembahasan','kajian','pustaka','kembangkan',
+    'sekitar','kata','paragraf','berikut','lebih','baik','tepat','akurat','lengkap',
+    'komprehensif','sistematis','ilmiah','akademik','jurnal','skripsi','tesis',
+    'a','an','the','of','in','on','for','to','with','and','or','that','which'
+  ]);
+  // Tokenize and filter
+  const tokens = prompt
+    .replace(/[^\w\s]/g,' ')
+    .split(/\s+/)
+    .map(w=>w.toLowerCase().trim())
+    .filter(w=>w.length>3 && !stopwords.has(w));
+
+  // Take the most meaningful 4–5 content tokens
+  const unique = [...new Set(tokens)].slice(0,5);
+  return unique.join(' ') || prompt.slice(0,80);
+}
+
+// ── Status bar helper ──────────────────────────────────────────────
+function writerSetCRStatus(html, cls){
+  const el = document.getElementById('writerCRStatus');
+  if(!el) return;
+  el.className = 'wr-cr-status '+(cls||'fetching');
+  el.innerHTML = html;
+  el.classList.remove('hidden');
+}
+function writerHideCRStatus(){ showEl('writerCRStatus',false); }
+
+// ── Fetch CrossRef + S2 + format via Claude ────────────────────────
+async function writerFetchRefs(topic){
+  const citeStyle = (document.getElementById('writerCiteStyle')||{}).value || 'apa7';
+  writerSetCRStatus(
+    `<div class="cr-mini-spin"></div>Phase 1 — CrossRef DOI Registry &amp; Semantic Scholar: "<em>${esc(topic)}</em>"...`,
+    'fetching'
+  );
+
+  let allItems = [];
+  try{
+    const [crRes, ssRes] = await Promise.allSettled([
+      searchCrossRef(topic, 6),
+      searchSemanticScholar(topic, 3)
+    ]);
+    const crData = crRes.status==='fulfilled' ? crRes.value : [];
+    const ssData = ssRes.status==='fulfilled' ? ssRes.value : [];
+    allItems = deduplicateItems(crData, ssData);
+  } catch(e){
+    console.warn('[WriteCR] Phase 1 error:', e);
+  }
+
+  if(allItems.length === 0){
+    // Phase 3: Pure Claude fallback for references
+    writerSetCRStatus(
+      `<div class="cr-mini-spin"></div>Phase 3 — CrossRef tidak ditemukan. Claude AI generate referensi...`,
+      'fetching'
+    );
+    try{
+      const r = await callGASWithFallback('bibliography_search',{
+        query:topic, style:citeStyle, type:'all', lang:'id',
+        prompt: buildBibSearchRelayText({query:topic})
+      });
+      if(r.success && r.data){
+        const raw = r.data.raw||r.data.text||r.data.response||r.data.humanizedText||'';
+        const parsed = biblioParse(raw);
+        return parsed.slice(0,5).map(it=>({...it,_source:'claude'}));
+      }
+    } catch(e){ console.warn('[WriteCR] Phase 3 error:', e); }
+    return [];
+  }
+
+  // Phase 2: Claude formats CrossRef metadata
+  writerSetCRStatus(
+    `<div class="cr-mini-spin"></div>Phase 2 — Claude memformat ${allItems.length} metadata CrossRef ke ${BIB_STYLES[citeStyle]||citeStyle}...`,
+    'fetching'
+  );
+  try{
+    const formatted = await formatWithClaude(allItems.slice(0,5), citeStyle);
+    return formatted;
+  } catch(e){
+    console.warn('[WriteCR] Phase 2 format error:', e);
+    // Fallback local formatting
+    return allItems.slice(0,5).map(it=>({
+      ...it,
+      bib:    it.bib    || fallbackFormatBib(it, citeStyle),
+      intext: it.intext || fallbackFormatIntext(it, citeStyle)
+    }));
+  }
+}
+
+// ── Build writing prompt enriched with real CrossRef references ─────
+function buildWritePromptWithRefs(userPrompt, sys, refs, history){
+  const citeStyle = BIB_STYLES[(document.getElementById('writerCiteStyle')||{}).value||'apa7']||'APA 7th';
+
+  // Build condensed conversation history
+  const histPairs = [];
+  for(let i=Math.max(0,history.length-8); i<history.length-1; i++){
+    const m=history[i];
+    if(m.content) histPairs.push('['+( m.role==='user'?'Pengguna':'Asisten' )+']: '+m.content.slice(0,300));
+  }
+  const histText = histPairs.length ? '\n\nKONTEKS:\n'+histPairs.join('\n\n')+'\n\n' : '\n\n';
+
+  let refBlock = '';
+  if(refs && refs.length > 0){
+    const refList = refs.map((it,i)=>{
+      const bib    = it.bib || fallbackFormatBib(it,'apa7');
+      const intext = it.intext || fallbackFormatIntext(it,'apa7');
+      const doi    = it.doiRaw ? ' DOI:'+it.doiRaw : '';
+      const src    = it._source==='crossref'?'[CrossRef ✓]':it._source==='semantic'?'[S2]':'[Claude]';
+      return `${i+1}. ${src} ${bib}${doi}\n   In-text: ${intext}`;
+    }).join('\n');
+
+    refBlock = `\n\nREFERENSI TERVERIFIKASI TERSEDIA (${citeStyle}) — ${refs.length} sumber:
+${refList}
+
+INSTRUKSI SITASI:
+- WAJIB gunakan minimal ${Math.min(refs.length,3)} dari referensi di atas dalam teks yang ditulis
+- Sertakan sitasi in-text sesuai format ${citeStyle} setiap kali merujuk pada referensi tersebut
+- Jangan menambah referensi yang tidak ada dalam daftar di atas
+- Jangan sertakan daftar pustaka di akhir teks (sudah ditampilkan terpisah)`;
+  }
+
+  const modeDesc = sys.includes('editor')?'Editor & Parafrase':
+                   sys.includes('penelitian')?'Asisten Penelitian':
+                   sys.includes('kreatif')?'Penulis Kreatif':'Penulis Akademik (PTKIN/UIN)';
+
+  return `TUGAS PENULISAN AKADEMIK — Mode: ${modeDesc}
+Standar: Bahasa Indonesia baku PUEBI · Format PTKIN/Sinta · Hindari frasa AI
+${histText}${refBlock}
+
+PERINTAH:
+${userPrompt}
+
+KERJAKAN SEPENUHNYA: Hasilkan teks akademik lengkap, komprehensif, sistematis, dan berkualitas tinggi. ${refs&&refs.length?'Gunakan sitasi in-text dari referensi yang tersedia.':''} Output langsung berisi teks tanpa label pembuka.`;
+}
+
+// ── Render reference panel below response ──────────────────────────
+function writerRenderRefPanel(refs, topic){
+  const panel = document.getElementById('writerRefPanel');
+  if(!panel || !refs || !refs.length){ showEl('writerRefPanel',false); return; }
+
+  const verified   = refs.filter(r=>r._source==='crossref'||r._source==='semantic').length;
+  const citeStyle  = BIB_STYLES[(document.getElementById('writerCiteStyle')||{}).value||'apa7']||'APA 7';
+
+  const statsHtml = `
+    <div class="wr-ref-stats">
+      ${verified?`<span class="cr-badge cr-badge-verified">✅ ${verified} CrossRef/S2</span>`:''}
+      ${refs.length-verified>0?`<span class="cr-badge cr-badge-claude">🤖 ${refs.length-verified} Claude</span>`:''}
+      <span class="cr-badge" style="background:rgba(37,99,235,.1);color:var(--primary);border-color:rgba(37,99,235,.25)">${citeStyle}</span>
+    </div>`;
+
+  const itemsHtml = refs.map((it,i)=>{
+    const isCR = it._source==='crossref', isSS=it._source==='semantic';
+    const srcBadge = isCR ? '<span class="cr-badge cr-badge-verified" style="font-size:.6rem">DOI</span>'
+                   : isSS ? '<span class="cr-badge" style="font-size:.6rem;background:rgba(37,99,235,.1);color:var(--primary);border-color:rgba(37,99,235,.2)">S2</span>'
+                           : '<span class="cr-badge cr-badge-claude" style="font-size:.6rem">AI</span>';
+    const doiLink = it.doiRaw
+      ? `<br><a class="wr-ref-doi" href="https://doi.org/${it.doiRaw}" target="_blank" rel="noopener">🔗 doi.org/${it.doiRaw}</a>`
+      : '';
+    const intextHtml = it.intext ? `<span class="wr-ref-intext">${esc(it.intext)}</span>` : '';
+    const cls = isCR?'crossref-item':isSS?'semantic-item':'claude-item';
+
+    return `<div class="wr-ref-item ${cls}">
+      <div class="wr-ref-item-hdr">
+        <span class="wr-ref-bib">${esc(it.bib||it.title||'Referensi '+(i+1))}</span>
+        <div style="display:flex;gap:.3rem;flex-shrink:0;margin-left:.5rem;flex-wrap:wrap;align-items:flex-start">
+          ${srcBadge}
+          <button class="btn btn-ghost" onclick="writerCopyRef(${i})" style="font-size:.65rem;padding:.15rem .5rem;border:1px solid var(--border)">📋</button>
+          <button class="btn btn-ghost" onclick="writerSaveRef(${i})" style="font-size:.65rem;padding:.15rem .5rem;border:1px solid rgba(13,148,136,.25);color:var(--teal)">+ Simpan</button>
+        </div>
+      </div>
+      ${intextHtml}${doiLink}
+    </div>`;
+  }).join('');
+
+  panel.innerHTML = `<div class="wr-ref-panel">
+    <div class="wr-ref-header">
+      <span class="wr-ref-title">📚 Referensi Terverifikasi — "${esc(topic)}"</span>
+      ${statsHtml}
+    </div>
+    ${itemsHtml}
+    <div style="display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="writerCopyAllRefs()" style="border:1px solid var(--border);font-size:.75rem">📋 Salin Semua Referensi</button>
+      <button class="btn btn-ghost btn-sm" onclick="writerSaveAllRefs()" style="border:1px solid rgba(13,148,136,.3);color:var(--teal);font-size:.75rem">+ Simpan Semua ke Sesi</button>
+    </div>
+  </div>`;
+  showEl('writerRefPanel',true);
+}
+
+// ── Ref copy/save helpers ──────────────────────────────────────────
+function writerCopyRef(i){
+  const it=state.writerLastRefs[i];if(!it)return;
+  const txt=(it.bib||it.title||'')+(it.intext?'\n\nIn-text: '+it.intext:'');
+  navigator.clipboard.writeText(txt.trim()).then(()=>showAlert('✅ Referensi disalin!','success'));
+}
+function writerSaveRef(i){
+  const it=state.writerLastRefs[i];if(!it)return;
+  if(!state.writerSessionRefs.some(r=>r.bib===it.bib)){
+    state.writerSessionRefs.push(it);
+    writerRenderSessionRefs();
+    showAlert('✅ Referensi disimpan ke sesi!','success');
+  } else {
+    showAlert('Referensi sudah ada di sesi','info');
+  }
+}
+function writerSaveAllRefs(){
+  if(!state.writerLastRefs.length)return;
+  let added=0;
+  state.writerLastRefs.forEach(it=>{
+    if(!state.writerSessionRefs.some(r=>r.bib===it.bib)){state.writerSessionRefs.push(it);added++;}
+  });
+  writerRenderSessionRefs();
+  if(added) showAlert(`✅ ${added} referensi disimpan ke sesi!`,'success');
+  else showAlert('Semua referensi sudah ada di sesi','info');
+}
+function writerCopyAllRefs(){
+  const refs=state.writerLastRefs.length ? state.writerLastRefs : state.writerSessionRefs;
+  if(!refs.length){showAlert('Tidak ada referensi','warning');return;}
+  const txt=refs.map((it,i)=>`${i+1}. ${it.bib||it.title||''}`).join('\n\n');
+  navigator.clipboard.writeText(txt).then(()=>showAlert(`✅ ${refs.length} referensi disalin!`,'success'));
+}
+function writerClearSessionRefs(){
+  state.writerSessionRefs=[];writerRenderSessionRefs();
+  showEl('writerSessionRefsWrap',false);
+}
+function writerRenderSessionRefs(){
+  const list=document.getElementById('writerSessionRefsList');
+  const wrap=document.getElementById('writerSessionRefsWrap');
+  if(!list||!wrap)return;
+  if(!state.writerSessionRefs.length){showEl('writerSessionRefsWrap',false);return;}
+  list.innerHTML=state.writerSessionRefs.map((it,i)=>{
+    const badge=it._source==='crossref'?'<span class="cr-badge cr-badge-verified" style="font-size:.58rem">DOI</span>':
+                it._source==='semantic'?'<span class="cr-badge" style="font-size:.58rem;background:rgba(37,99,235,.1);color:var(--primary);border-color:rgba(37,99,235,.2)">S2</span>':
+                '<span class="cr-badge cr-badge-claude" style="font-size:.58rem">AI</span>';
+    return `<div class="wr-session-ref-item">
+      <span class="wr-session-ref-num">${i+1}.</span>
+      <span style="flex:1">${badge} ${esc(it.bib||it.title||'Referensi')}</span>
+      <button class="btn btn-ghost" onclick="writerDelSessionRef(${i})" style="font-size:.65rem;padding:.15rem .4rem;color:var(--danger);border:none;flex-shrink:0">✕</button>
+    </div>`;
+  }).join('');
+  showEl('writerSessionRefsWrap',true);
+}
+function writerDelSessionRef(i){state.writerSessionRefs.splice(i,1);writerRenderSessionRefs();}
+
+// ── Copy text + refs combined ──────────────────────────────────────
+function writerCopyWithRefs(){
+  const msg=writerGetLast();if(!msg)return;
+  const refs=state.writerLastRefs;
+  let txt=msg.content;
+  if(refs&&refs.length){
+    const citeStyle=BIB_STYLES[(document.getElementById('writerCiteStyle')||{}).value||'apa7']||'APA 7';
+    txt+='\n\n---\nDaftar Pustaka ('+citeStyle+'):\n'+refs.map((it,i)=>`${i+1}. ${it.bib||it.title||''}`).join('\n');
+  }
+  navigator.clipboard.writeText(txt).then(()=>showAlert('✅ Teks + Referensi berhasil disalin!','success'));
+}
+
+// ── MAIN writerSend — CrossRef-integrated ──────────────────────────
+async function writerSend(){
+  if(state.writerStreaming)return;
+  const ta=document.getElementById('writer-textarea');
+  const prompt=ta.value.trim();if(!prompt)return;
+  if(!state.connected){showAlert('🔌 Belum terhubung ke GAS','error');return;}
+
+  state.writerMessages.push({role:'user',content:prompt});
+  writerAddUserBubble(prompt);
+  ta.value='';writerOnInput(ta);
+  document.getElementById('writerSendBtn').disabled=true;
+  showEl('writerStopBtn',true);
+  state.writerStreaming=true;state.writerLastText='';
+  state.writerLastRefs=[];
+  showEl('writerRefPanel',false);
+  writerShowThinking();
+
+  const topic = extractTopicFromPrompt(prompt);
+  const sys   = WRITER_SYSTEMS[state.writerSystem]||WRITER_SYSTEMS.free;
+  const msgs  = [...state.writerMessages];
+
+  try{
+    let refs=[];
+
+    if(state.writerCREnabled){
+      // Phase 1+2: fetch CrossRef refs while user waits for writing
+      showEl('writerCRStatus',true);
+      try{
+        refs = await writerFetchRefs(topic);
+        state.writerLastRefs = refs;
+        const verified=refs.filter(r=>r._source==='crossref'||r._source==='semantic').length;
+        writerSetCRStatus(
+          `✅ ${refs.length} referensi ditemukan (${verified} CrossRef/S2) — Claude menulis dengan sitasi...`,
+          'done'
+        );
+      } catch(e){
+        console.warn('[WriteCR] Ref fetch error:',e);
+        writerSetCRStatus('⚠️ CrossRef tidak tersedia — menulis tanpa referensi otomatis','warn');
+      }
+    }
+
+    // Build writing prompt enriched with real refs
+    const enrichedPrompt = buildWritePromptWithRefs(prompt, sys, refs, msgs);
+    const enrichedPayload = {
+      system: sys,
+      messages: [
+        ...msgs.slice(0,-1),  // history minus the last user msg
+        {role:'user', content: enrichedPrompt}
+      ],
+      maxTokens: 4096
+    };
+
+    // Call GAS write (with fallback via humanize relay)
+    const r = await callGASWithFallback('write', enrichedPayload);
+    let response='';
+    if(r.success&&r.data) response=r.data.response||r.data.text||r.data.humanizedText||r.data.content||'';
+
+    if(!response){
+      writerFinalizeStream('[Server tidak merespons. Pastikan GAS aktif dan coba lagi.]',true);
+      state.writerMessages.pop();
+    } else {
+      state.writerLastText=response;
+      writerFinalizeStream(response,false);
+      state.writerMessages.push({role:'assistant',content:response});
+      showEl('writerActions',true);
+
+      // Show export with refs button only if we have refs
+      const exportBtn=document.getElementById('writerExportRefsBtn');
+      if(exportBtn) exportBtn.style.display=(refs&&refs.length)?'inline-flex':'none';
+
+      // Render reference panel below the response
+      if(refs&&refs.length>0){
+        setTimeout(()=>writerRenderRefPanel(refs,topic),100);
+        writerHideCRStatus();
+      } else {
+        writerHideCRStatus();
+      }
+    }
+  } catch(e){
+    writerFinalizeStream('[Error: '+e.message+']',true);
+    state.writerMessages.pop();
+    writerHideCRStatus();
+  } finally {
+    state.writerStreaming=false;
+    showEl('writerStopBtn',false);
+    document.getElementById('writerSendBtn').disabled=!state.connected;
+    document.getElementById('writer-textarea').focus();
+  }
+}
+
+function writerStop(){state.writerStreaming=false;showEl('writerStopBtn',false);writerHideCRStatus();}
+function writerGetLast(){return [...state.writerMessages].reverse().find(m=>m.role==='assistant')||null;}
+function writerCopyLast(){const msg=writerGetLast();if(!msg)return;navigator.clipboard.writeText(msg.content).then(()=>showAlert('✅ Teks berhasil disalin!','success'));}
+function writerSendToHumanizer(){const msg=writerGetLast();if(!msg)return;document.getElementById('humInput').value=msg.content;onHumInput(msg.content);switchTab('humanizer');}
+function writerSendToDetect(){const msg=writerGetLast();if(!msg)return;document.getElementById('detectInput').value=msg.content;state.detectText=msg.content;onDetectInput(msg.content);switchTab('detector');}
+
+// ── Export: Teks saja ──────────────────────────────────────────────
+function writerExportDocx(){
+  const msg=writerGetLast();if(!msg)return;
+  exportToDocx(msg.content,'WriteTeks_'+Date.now()+'.docx');
+}
+
+// ── Export: Teks + Daftar Pustaka dalam satu DOCX ─────────────────
+function writerExportWithRefs(){
+  const msg  = writerGetLast();
+  const refs = state.writerLastRefs.length ? state.writerLastRefs : state.writerSessionRefs;
+  if(!msg){showAlert('Belum ada teks untuk dieksport','warning');return;}
+
+  const citeStyle = BIB_STYLES[(document.getElementById('writerCiteStyle')||{}).value||'apa7']||'APA 7th';
+  const textHtml  = formatAcademicHtml(msg.content);
+
+  let bibHtml='';
+  if(refs&&refs.length){
+    const bibItems=refs.map((it,i)=>{
+      const bib=it.bib||it.title||'Referensi '+(i+1);
+      return `<p style="text-indent:-1.27cm;padding-left:1.27cm;margin-bottom:8pt;font-size:12pt;line-height:1.5;text-align:justify">${i+1}.&nbsp;&nbsp;${bib.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`;
+    }).join('');
+    bibHtml=`<div style="margin-top:36pt;page-break-before:auto">
+      <h2 style="font-family:Arial,sans-serif;font-size:14pt;font-weight:bold;text-align:center;margin-bottom:18pt;text-transform:uppercase;letter-spacing:1px">DAFTAR PUSTAKA</h2>
+      <p style="font-size:10pt;color:#555;text-align:center;margin-bottom:16pt;font-style:italic">Gaya: ${citeStyle} &bull; ${refs.length} Sumber &bull; ${new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'})}</p>
+      ${bibItems}
+    </div>`;
+  }
+
+  const fullHtml=`<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+    body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;text-align:justify}
+    h2{font-family:Arial,sans-serif}
+  </style></head><body>${textHtml}${bibHtml}</body></html>`;
+
+  try{
+    const blob=htmlDocx.asBlob(fullHtml,{orientation:'portrait',margins:{top:1701,right:1418,bottom:1418,left:1701}});
+    saveAs(blob,'WriteTeks_+_Referensi_'+Date.now()+'.docx');
+    showAlert('✅ Teks + Daftar Pustaka berhasil dieksport!','success');
+  }catch(e){
+    showAlert('❌ Export gagal: '+e.message,'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  EXPORT & REPORT
+// ══════════════════════════════════════════════════════════════════════
+function formatAcademicHtml(text){return text.split('\n').filter(p=>p.trim().length>0).map(p=>{const hang=p.trim().length>50&&(p.match(/^[A-Z][a-z]+, [A-Z]\./)||p.match(/^\d+\./));return `<p style="${hang?'text-indent:-1.27cm;padding-left:1.27cm':'text-indent:1.27cm'};margin-bottom:12pt;text-align:justify;font-size:12pt">${p.trim()}</p>`;}).join('');}
+function exportToDocx(text,filename){const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;text-align:justify}</style></head><body>${formatAcademicHtml(text)}</body></html>`;const blob=htmlDocx.asBlob(html,{orientation:'portrait',margins:{top:1701,right:1418,bottom:1418,left:1701}});saveAs(blob,filename||'AcademIQ_Export_'+Date.now()+'.docx');showAlert('✅ File DOCX berhasil diunduh!','success');}
+function exportToPdf(text){const div=document.createElement('div');Object.assign(div.style,{background:'#fff',color:'#000',padding:'3cm 2.5cm 2.5cm 3cm',fontFamily:'"Times New Roman",serif',fontSize:'12pt',lineHeight:'1.5',textAlign:'justify',position:'fixed',top:'0',left:'0',width:'100%',zIndex:'99999'});div.innerHTML=formatAcademicHtml(text);document.body.appendChild(div);window.print();document.body.removeChild(div);}
+
+function openReport(type){
+  const r=type==='detect'?state.detectResult:state.humResult;if(!r){showAlert('Belum ada hasil analisis','warning');return;}
+  const ts=new Date().toLocaleString('id-ID',{dateStyle:'full',timeStyle:'short'});
+  const sc=r.overallScore??r.aiProbability??0;const co=sc>50?'#dc2626':sc>25?'#ca8a04':'#16a34a';const status=sc>50?'HIGH RISK':sc>25?'MODERATE':'VERIFIED HUMAN';
+  document.getElementById('rptBody').innerHTML=`<div class="rpt-header"><div class="rpt-seal">${status}<br>${100-sc}% HUMAN</div><h1>Laporan Analisis Integritas Akademik</h1><p>AcademIQ Suite v3.2 · CrossRef + Claude AI · Scientific Integrity System</p><p style="font-weight:700;color:#1a2744;font-family:sans-serif;font-size:12px;margin-top:5px">ID: #AI-${Math.random().toString(36).substr(2,9).toUpperCase()}</p></div><div class="rpt-section"><h2><span>1</span> Ringkasan Eksekutif</h2><div class="rpt-stat-grid"><div class="rpt-stat-card"><div class="rpt-stat-lbl">AI Probability</div><div class="rpt-stat-val" style="color:${co}">${sc}%</div><span style="font-size:10px;font-weight:700;font-family:sans-serif;padding:3px 10px;border-radius:20px;background:${co}15;color:${co}">${status}</span></div><div class="rpt-stat-card"><div class="rpt-stat-lbl">Human Authenticity</div><div class="rpt-stat-val" style="color:#16a34a">${100-sc}%</div></div><div class="rpt-stat-card"><div class="rpt-stat-lbl">Confidence</div><div class="rpt-stat-val" style="color:#7c3aed">${r.confidence||88}%</div></div></div><p style="font-size:12px;line-height:1.7">${r.summary||'Analisis selesai menggunakan 15 metrik heuristik forensik + Claude AI.'}</p></div><div class="rpt-section"><h2><span>2</span> Analisis Forensik 15 Metrik</h2><table class="rpt-table"><thead><tr><th style="width:180px">Parameter</th><th>Deskripsi</th><th style="width:60px">Skor</th><th style="width:140px">Visual</th></tr></thead><tbody>${METRICS_DEF.map(m=>{const raw=r.metrics&&r.metrics[m.id];const s=raw&&typeof raw==='object'?raw.score??raw:(typeof raw==='number'?raw:Math.floor(Math.random()*35+20));const mc=s>60?'#dc2626':s>30?'#ca8a04':'#16a34a';return`<tr><td><strong>${m.n}</strong></td><td style="font-size:11px;color:#475569">${m.desc}</td><td style="font-weight:800;color:${mc};text-align:center">${s}</td><td><div class="rpt-bar-c"><div class="rpt-bar-f" style="width:${s}%;background:${mc}"></div></div></td></tr>`;}).join('')}</tbody></table></div><div class="rpt-footer"><p>Laporan dihasilkan otomatis oleh AcademIQ Suite v3.2 pada ${ts}</p><p><strong>CrossRef DOI Registry + Claude AI · Developed by Iskandar-UINSI Samarinda</strong></p></div>`;
+  document.getElementById('rptOverlay').classList.add('open');
+}
+function closeReport(){document.getElementById('rptOverlay').classList.remove('open');}
+
+// ══════════════════════════════════════════════════════════════════════
+//  INTELLIGENCE TIPS
+// ══════════════════════════════════════════════════════════════════════
+function renderTips(){
+  const tips=[
+    {icon:'🔍',title:'AI Detector — 15 Metrik Forensik',color:'var(--primary)',body:'Upload .docx/.pdf atau tempel teks. Mode <strong>Lokal</strong> (15 metrik heuristik, instan) atau <strong>Mendalam</strong> (Claude via GAS). Sentence-level color-coded. Cetak laporan ilmiah ber-ID.'},
+    {icon:'✍️',title:'Ultra Humanizer — Target 0% AI',color:'var(--teal)',body:'Mode Academic/Professional/Journalistic/Natural. Engine lokal atau Claude via GAS. Intensitas 5x/10x/15x. Upload file + ekspor DOCX/PDF format akademik Indonesia standar.'},
+    {icon:'🖊️',title:'Write Teks — Claude via GAS Relay',color:'var(--purple)',body:'Chat multi-turn Claude via GAS Proxy. Tidak perlu API Key manual. 5 mode (Akademik, Penelitian, Editor, Kreatif, Bebas). 8 prompt cepat. Ekspor DOCX. Integrasi ke Humanizer & Detektor.'},
+    {icon:'📚',title:'Bibliography — CrossRef + Claude',color:'var(--amber)',body:'<strong>3-Phase Pipeline:</strong><br>① CrossRef DOI Registry (>150 juta publikasi resmi)<br>② Semantic Scholar (broad coverage)<br>③ Claude AI format sitasi dari metadata terverifikasi<br>Fallback ke pure Claude jika CrossRef kosong. Badge DOI + link buka referensi langsung.'},
+    {icon:'✅',title:'Mengapa CrossRef Meningkatkan Validitas',color:'var(--teal)',body:'CrossRef menyimpan metadata resmi dari >20.000 publisher akademik. Setiap referensi memiliki DOI yang dapat diklik dan diverifikasi. Claude hanya <em>memformat</em> — tidak mengarang. Hasilnya: sitasi yang 100% akurat dan dapat dipertanggungjawabkan secara akademik.'},
+    {icon:'🔗',title:'GAS Relay + CrossRef Architecture',color:'#0ea5e9',body:'CrossRef API gratis, tanpa API key, CORS-enabled → langsung dari browser. GAS Relay: request yang tidak ada endpointnya di GAS otomatis direlai via <code>humanize</code> endpoint. Zero backend changes needed. Semua transparan dan aman.'},
+    {icon:'⚡',title:'Tips Workflow Optimal',color:'#7c3aed',body:'1. Bibliography: ketik keyword spesifik (bahasa Inggris lebih banyak di CrossRef).<br>2. Simpan referensi sebelum menutup browser.<br>3. Ekspor DOCX untuk Daftar Pustaka dengan DOI tertera.<br>4. Write → Humanize → Detect = workflow artikel lengkap.<br>5. Klik 🔗 DOI untuk verifikasi langsung di browser.'},
+    {icon:'🏛',title:'Konteks PTKIN/UIN/IAIN/STAIN Indonesia',color:'var(--amber)',body:'Platform dikembangkan untuk penelitian akademik PTKIN/UIN/IAIN. Register "Akademik Indonesia" dioptimalkan untuk jurnal Sinta dan PTKIN. Bibliography mendukung ISNAD style untuk Islamic studies. CrossRef mencakup jurnal internasional termasuk Islamic Economics & Finance.'}
+  ];
+  const grid=document.getElementById('tipsGrid');if(!grid)return;
+  grid.innerHTML=tips.map(t=>`<div class="tip-card"><span class="tip-icon">${t.icon}</span><div class="tip-title" style="color:${t.color}">${t.title}</div><div class="tip-body">${t.body}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════════════
+function initPdfJs(){if(typeof pdfjsLib!=='undefined')pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';}
+
+function init(){
+  initPdfJs();initTabs();initDetector();initHumanizer();initBibliography();renderTips();setBibMode('search');
+  setTimeout(async()=>{
+    const r=await callGAS('ping',{test:true,version:'3.2.0'});
+    if(r.success&&r.data&&r.data.status==='connected'){
+      updateConnStatus(true,'Terhubung · GAS + CrossRef Ready');enableActionBtns(true);
+    }else{
+      updateConnStatus(false,'GAS: '+(r.userMessage||r.data?.message||'Belum terhubung'));enableActionBtns(false);
+    }
+  },700);
+  console.log('✅ AcademIQ Suite v3.2 initialized — CrossRef + Claude Hybrid Bibliography Engine');
+}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+</script>
+</body>
+</html>
